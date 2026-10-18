@@ -1,0 +1,379 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/schema/plugin.schema.json",
+  "title": "Rattleboard plugin manifest (format 1), community repo rules",
+  "description": "Mirrors the desktop app's validation (rattleboard-core/src/plugins.rs) for the kinds this repo accepts. Command plugins are not accepted. tools/build-index.mjs is the authoritative check (it also checks durations and their limits, JSONPath syntax, setting defaults and that every placeholder is declared).",
+  "type": "object",
+  "required": [
+    "format",
+    "id",
+    "name",
+    "kind"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "format": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100,
+      "pattern": "^(?!rattleboard\\.)[a-z0-9.-]+$",
+      "description": "Reverse-DNS style, lower case; must equal the plugin's folder name"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 60,
+      "pattern": "\\S"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "kind": {
+      "enum": [
+        "rss",
+        "json",
+        "ical",
+        "text"
+      ],
+      "description": "command plugins are not accepted in this repo"
+    },
+    "fetch": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "minLength": 9,
+          "maxLength": 2000,
+          "pattern": "^\\s*https://",
+          "description": "https:// only. Placeholders: {{settings.x}}, {{secret.x}}, {{now:format}}"
+        },
+        "method": {
+          "type": "string",
+          "pattern": "^([Gg][Ee][Tt]|[Pp][Oo][Ss][Tt])$"
+        },
+        "headers": {
+          "type": "object",
+          "maxProperties": 20,
+          "propertyNames": {
+            "pattern": "^[!#$%&'*+\\-.^_`|~0-9A-Za-z]+$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 4000
+          }
+        },
+        "every": {
+          "$ref": "#/$defs/duration",
+          "description": "At least 1m, at most 7d; default 15m"
+        }
+      }
+    },
+    "every": {
+      "$ref": "#/$defs/duration",
+      "description": "For text plugins: how often the card is re-drawn (at least 10s)"
+    },
+    "pick": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "$ref": "#/$defs/path"
+        },
+        "id": {
+          "$ref": "#/$defs/path"
+        },
+        "title": {
+          "$ref": "#/$defs/path"
+        },
+        "body": {
+          "$ref": "#/$defs/path"
+        },
+        "time": {
+          "$ref": "#/$defs/path"
+        }
+      }
+    },
+    "card": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "string",
+          "maxLength": 2000,
+          "not": {
+            "pattern": "\\{\\{\\s*secret\\."
+          }
+        },
+        "chip": {
+          "oneOf": [
+            {
+              "enum": [
+                "",
+                "none",
+                "red",
+                "orange",
+                "yellow",
+                "green",
+                "blue",
+                "violet",
+                "white",
+                "black"
+              ]
+            },
+            {
+              "type": "integer",
+              "minimum": 63,
+              "maximum": 70
+            }
+          ]
+        },
+        "align": {
+          "enum": [
+            "center",
+            "centre",
+            "left"
+          ]
+        },
+        "pages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        }
+      }
+    },
+    "priority": {
+      "enum": [
+        "ambient",
+        "alert"
+      ]
+    },
+    "alertWhen": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "pattern": "^keyword:\\s*\\S"
+      }
+    },
+    "maxItems": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 50
+    },
+    "dwell": {
+      "$ref": "#/$defs/duration",
+      "description": "10s to 1h"
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "days": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^([Mm][Oo][Nn]|[Tt][Uu][Ee]|[Ww][Ee][Dd]|[Tt][Hh][Uu]|[Ff][Rr][Ii]|[Ss][Aa][Tt]|[Ss][Uu][Nn])"
+          }
+        },
+        "from": {
+          "$ref": "#/$defs/hhmm"
+        },
+        "to": {
+          "$ref": "#/$defs/hhmm"
+        }
+      },
+      "dependentRequired": {
+        "from": [
+          "to"
+        ],
+        "to": [
+          "from"
+        ]
+      }
+    },
+    "settings": {
+      "type": "array",
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "#/$defs/key"
+          },
+          "label": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "text",
+              "number",
+              "toggle",
+              "select",
+              "date",
+              "time",
+              "lines"
+            ]
+          },
+          "options": {
+            "type": "array"
+          },
+          "default": {}
+        },
+        "if": {
+          "properties": {
+            "type": {
+              "const": "select"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        "then": {
+          "required": [
+            "options"
+          ],
+          "properties": {
+            "options": {
+              "minItems": 1
+            }
+          }
+        }
+      }
+    },
+    "secrets": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "$ref": "#/$defs/key"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "run": false
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "rss",
+              "json",
+              "ical"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "fetch"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "text"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "card"
+        ],
+        "properties": {
+          "card": {
+            "required": [
+              "template"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "json"
+          }
+        }
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "pick"
+            ],
+            "properties": {
+              "pick": {
+                "required": [
+                  "title"
+                ]
+              }
+            }
+          },
+          {
+            "required": [
+              "card"
+            ],
+            "properties": {
+              "card": {
+                "required": [
+                  "template"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "duration": {
+      "description": "Seconds, or a duration like \"30s\", \"15m\", \"1h\" or \"1h30m\"",
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "type": "string",
+          "pattern": "^\\s*(\\d+|(\\d+[smhdSMHD])+)\\s*$"
+        }
+      ]
+    },
+    "path": {
+      "type": "string",
+      "description": "JSONPath subset: $, .key, ['key'], [n] and [*]. May contain {{settings.x}} placeholders.",
+      "pattern": "^\\s*(\\$|.*\\{\\{)"
+    },
+    "hhmm": {
+      "type": "string",
+      "pattern": "^\\s*(\\d{1,2}:\\d{1,2})?\\s*$"
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_]{1,40}$"
+    }
+  }
+}

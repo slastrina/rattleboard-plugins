@@ -1,0 +1,48 @@
+name: Plugin request
+description: Ask for a plugin you'd like someone to build
+title: "Plugin request: "
+labels: ["plugin request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe what you'd like on your board. Requests that use a public, keyless HTTPS feed or API are the easiest to build.
+        If you'd like to build it yourself, see [CONTRIBUTING.md](https://github.com/slastrina/rattleboard-plugins/blob/main/CONTRIBUTING.md).
+  - type: input
+    id: what
+    attributes:
+      label: What should the card show?
+      placeholder: "Next three trams from my stop"
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Where does the data come from?
+      description: A link to the feed, API or its documentation, if you know one.
+      placeholder: "https://example.com/api/docs"
+  - type: dropdown
+    id: key
+    attributes:
+      label: Does the service need an account or API key?
+      options:
+        - "No"
+        - "Yes, a free one"
+        - "Yes, a paid one"
+        - "Not sure"
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example card
+      description: How you'd like it to look on a 6×22 board (or a Compact 3×15 one).
+      render: text
+      placeholder: |
+        TRAM 96 TO ST KILDA
+        2 MIN  9 MIN  17 MIN
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: Settings it should have, how often it should update, etc.

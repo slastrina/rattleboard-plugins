@@ -1,0 +1,46 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Unit tests for the validator
+        run: npm test
+
+      - name: Validate every plugin
+        run: npm run validate
+
+      - name: Version bumps (pull requests)
+        if: github.event_name == 'pull_request'
+        run: node tools/build-index.mjs --validate-only --base "origin/${{ github.base_ref }}"
+
+      # index.json is generated: after a merge to main, the Index workflow rebuilds and
+      # commits it. A change that includes index.json itself must match what the tools
+      # generate exactly, so it's never edited by hand or committed out of date.
+      - name: index.json is up to date
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
+        run: |
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "No base to compare with: checking index.json anyway."
+            npm run check-index
+          elif git diff --name-only "$BASE"...HEAD | grep -qx 'index.json'; then
+            npm run check-index
+          else
+            echo "index.json isn't part of this change; it's regenerated after merging to main."
+          fi

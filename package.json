@@ -1,0 +1,16 @@
+{
+  "name": "rattleboard-plugins",
+  "private": true,
+  "description": "Community plugins for Rattleboard: validation and the index the apps read",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "node tools/build-index.mjs --validate-only",
+    "build-index": "node tools/build-index.mjs",
+    "check-index": "node tools/build-index.mjs --check",
+    "test": "node --test tools/build-index.test.mjs"
+  }
+}

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Rattleboard app issues
+    url: https://github.com/slastrina/rattleboard/issues
+    about: Problems with the Rattleboard apps themselves go here.
