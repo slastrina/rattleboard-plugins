@@ -18,6 +18,9 @@ A plugin is one small JSON file that adds a **source** to your board's rotation:
 | [Bitcoin price](plugins/community.bitcoin-price) | Price and 24-hour change | No |
 | [Sunrise and sunset](plugins/community.sunrise-sunset) | Today's times for a place | No |
 | [GitHub stars](plugins/community.github-repo-stars) | A repository's star count | No |
+| [Planes near the airport](plugins/community.planes-near-airport) | Aircraft departing or arriving nearby (adsb.lol) | No |
+| [PTV next trains](plugins/community.ptv-next-trains) | The next departures from a Victorian stop | Yes (free, from PTV) |
+| [PTV disruptions](plugins/community.ptv-disruptions) | Current disruptions at a Victorian stop | Yes (free, from PTV) |
 
 The full list, with authors, versions and the hosts each plugin contacts, is [`index.json`](index.json).
 

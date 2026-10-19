@@ -1,0 +1,54 @@
+{
+  "format": 1,
+  "id": "community.ptv-next-trains",
+  "name": "PTV next trains",
+  "description": "The next departures from your Melbourne station or stop, from PTV's Timetable API (needs a free PTV developer ID and key)",
+  "kind": "json",
+  "fetch": {
+    "url": "https://timetableapi.ptv.vic.gov.au/v3/departures/route_type/{{settings.route_type}}/stop/{{settings.stop}}?max_results=6&devid={{settings.devid}}",
+    "every": "1m",
+    "sign": { "type": "hmac-sha1", "key": "{{secret.key}}", "over": "path+query", "param": "signature", "case": "upper" }
+  },
+  "pick": {
+    "items": "$.departures[*]",
+    "id": "$.run_ref",
+    "title": "$.platform_number",
+    "time": "$.scheduled_departure_utc",
+    "as": "status",
+    "fields": {
+      "when": ["$.estimated_departure_utc", "$.scheduled_departure_utc"],
+      "platform": "$.platform_number"
+    },
+    "where": [
+      { "path": "$.route_id", "op": "==", "value": "{{settings.route}}" },
+      { "path": "$.direction_id", "op": "==", "value": "{{settings.direction}}" }
+    ],
+    "sort": { "path": "$.scheduled_departure_utc", "order": "asc" }
+  },
+  "maxItems": 3,
+  "card": {
+    "template": "{{settings.label|upper}}\n{{rows}}",
+    "row": "{{field.when|time|pad:6}}{{field.when|mins|pad:-3}} MIN  PLAT {{field.platform|default:-}}",
+    "empty": "{{settings.label|upper}}\nNo departures listed",
+    "chip": "blue",
+    "align": "left"
+  },
+  "dwell": "30s",
+  "settings": [
+    { "key": "devid", "label": "PTV developer ID (devid)", "type": "text", "default": "" },
+    { "key": "stop", "label": "Stop id (Flinders Street is 1071)", "type": "text", "default": "1071" },
+    { "key": "label", "label": "Name on the card", "type": "text", "default": "Flinders St" },
+    { "key": "route_type", "label": "Mode", "type": "select", "default": "0", "options": [
+      { "value": "0", "label": "Train" },
+      { "value": "1", "label": "Tram" },
+      { "value": "2", "label": "Bus" },
+      { "value": "3", "label": "V/Line" },
+      { "value": "4", "label": "Night bus" }
+    ] },
+    { "key": "route", "label": "Only this route id (optional)", "type": "text", "default": "" },
+    { "key": "direction", "label": "Only this direction id (optional)", "type": "text", "default": "" }
+  ],
+  "secrets": [
+    { "key": "key", "label": "PTV API key" }
+  ]
+}

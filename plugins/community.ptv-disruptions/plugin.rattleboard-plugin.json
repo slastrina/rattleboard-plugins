@@ -1,0 +1,42 @@
+{
+  "format": 1,
+  "id": "community.ptv-disruptions",
+  "name": "PTV disruptions",
+  "description": "Current disruptions at your Melbourne station or stop, from PTV's Timetable API (needs a free PTV developer ID and key)",
+  "kind": "json",
+  "fetch": {
+    "url": "https://timetableapi.ptv.vic.gov.au/v3/disruptions/stop/{{settings.stop}}?disruption_status=current&devid={{settings.devid}}",
+    "every": "5m",
+    "sign": { "type": "hmac-sha1", "key": "{{secret.key}}", "over": "path+query", "param": "signature", "case": "upper" }
+  },
+  "pick": {
+    "items": "$.disruptions[*][*]",
+    "id": "$.disruption_id",
+    "title": "$.title",
+    "time": "$.last_updated",
+    "as": "status",
+    "fields": {
+      "type": "$.disruption_type"
+    },
+    "where": [
+      { "path": "$.disruption_status", "op": "==", "value": "Current" }
+    ],
+    "sort": { "path": "$.last_updated", "order": "desc" }
+  },
+  "maxItems": 5,
+  "card": {
+    "template": "{{field.type|default:Disruption|upper}}\n{{title}}",
+    "empty": "{{settings.label|upper}}\nNo current disruptions",
+    "chip": "orange",
+    "pages": 2
+  },
+  "dwell": "45s",
+  "settings": [
+    { "key": "devid", "label": "PTV developer ID (devid)", "type": "text", "default": "" },
+    { "key": "stop", "label": "Stop id (Flinders Street is 1071)", "type": "text", "default": "1071" },
+    { "key": "label", "label": "Name on the card", "type": "text", "default": "Flinders St" }
+  ],
+  "secrets": [
+    { "key": "key", "label": "PTV API key" }
+  ]
+}

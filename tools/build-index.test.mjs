@@ -2,7 +2,7 @@
 // (rattleboard-core/src/plugins.rs, `manifests`), so the two validators stay in step.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { checkManifest, checkMeta, checkPreview, duration, parsePath, hostsOf } from "./build-index.mjs";
+import { checkManifest, checkMeta, checkPreview, checkFilters, duration, parsePath, hostsOf } from "./build-index.mjs";
 
 const hn = () => ({
   format: 1, id: "community.hn", name: "Hacker News", kind: "rss",
@@ -108,4 +108,72 @@ test("meta.json and preview.json", () => {
   assert.throws(() => checkPreview({ rows: 6, cols: 22, characters: [row(0)] }), /6 rows/);
   assert.throws(() => checkPreview({ rows: 1, cols: 22, characters: [row(72)] }), /0 to 71/);
   assert.throws(() => checkPreview({ rows: 1, cols: 22, characters: [row(0)] }), /blank/);
+});
+
+// Format 1.1, mirroring rattleboard-core/src/plugins.rs `manifest_format_1_1`.
+const list = (pick, card = {}) => ({
+  format: 1, id: "community.list", name: "List", kind: "json", fetch: { url: "https://example.com/x" }, pick, card,
+  settings: [{ key: "phase", type: "select", default: "departures", options: ["departures", "arrivals", "airborne"] }, { key: "dir", type: "text", default: "" }],
+});
+
+test("format 1.1: a status list with where, sort, fields and filters passes", () => {
+  checkManifest(list(
+    { items: "$.ac[*]", title: "$.flight", as: "status", fields: { type: "$.t", alt: ["$.alt_baro", "$.alt_geom"] },
+      where: [{ path: "$.alt_baro", op: "!=", value: "ground" }, { path: "$.baro_rate", op: ">", value: 300, when: { setting: "phase", is: "departures" } }, { path: "$.r", op: "exists" }, { path: "$.d", op: "==", value: "{{settings.dir}}" }],
+      sort: { path: "$.alt_baro", order: "asc", numeric: true } },
+    { template: "{{settings.phase|upper}}\n{{rows}}", row: "{{title|pad:8}}{{field.type}} {{field.alt|num}} FT", empty: "Nothing nearby" }), "community.list");
+});
+
+test("format 1.1: the desktop's refusals are refused here too", () => {
+  const cases = [
+    [{ items: "$.a[*]", title: "$.t", where: [{ path: "$.x", op: "=~", value: 1 }] }, {}, 'op "=~"'],
+    [{ items: "$.a[*]", title: "$.t", where: [{ path: "$.x", op: "==" }] }, {}, "needs a value"],
+    [{ items: "$.a[*]", title: "$.t", where: [{ path: "$.x", op: "exists", value: 1 }] }, {}, "takes no value"],
+    [{ items: "$.a[*]", title: "$.t", where: [{ path: "x", op: "exists" }] }, {}, "starts with $"],
+    [{ items: "$.a[*]", title: "$.t", where: [{ path: "$.x", op: "==", value: [1] }] }, {}, "string, number"],
+    [{ items: "$.a[*]", title: "$.t", where: [{ path: "$.x", op: "==", value: "{{secret.k}}" }] }, {}, "Secrets"],
+    [{ items: "$.a[*]", title: "$.t", where: [{ path: "$.x", op: "==", value: 1, when: { setting: "nope", is: "a" } }] }, {}, "when.setting"],
+    [{ title: "$.t", where: [{ path: "$.x", op: "exists" }] }, {}, "need pick.items"],
+    [{ items: "$.a[*]", title: "$.t", sort: { path: "$.x", order: "up" } }, {}, "asc or desc"],
+    [{ items: "$.a[*]", title: "$.t", sort: { path: "$.x", numeric: "yes" } }, {}, "numeric"],
+    [{ items: "$.a[*]", title: "$.t", fields: { "a b": "$.x" } }, {}, "pick.fields name"],
+    [{ items: "$.a[*]", title: "$.t", fields: { a: "$[x]" } }, {}, "pick.fields.a"],
+    [{ items: "$.a[*]", title: "$.t", fields: { a: [] } }, {}, "up to 5 paths"],
+    [{ items: "$.a[*]", title: "$.t", as: "table" }, {}, "feed or status"],
+    [{ items: "$.a[*]", title: "$.t" }, { row: "{{title}}" }, "card.row and card.empty"],
+    [{ title: "$.t" }, { template: "{{title|shout}}" }, "unknown filter |shout"],
+    [{ title: "$.t" }, { template: "{{title|pad:0}}" }, "|pad:0"],
+    [{ title: "$.t" }, { template: "{{title|round:9}}" }, "|round:9"],
+    [{ title: "$.t" }, { template: "{{title|default}}" }, "|default"],
+    [{ title: "$.t" }, { template: "{{field.nope}}" }, 'pick.fields has no "nope"'],
+  ];
+  for (const [pick, card, msg] of cases) assert.throws(() => checkManifest(list(pick, card), "community.list"), (e) => e.message.includes(msg), `${JSON.stringify(pick)} ${JSON.stringify(card)}`);
+  const rss = { format: 1, id: "community.r", name: "R", kind: "rss", fetch: { url: "https://example.com/f" }, pick: { fields: { a: "$.a" } } };
+  assert.throws(() => checkManifest(rss, "community.r"), /json plugins/);
+  for (const ok of ["{{a|upper|lower|trim|num|mins}}", "{{a|round}}{{a|round:2}}{{a|default:-}}{{a|pad:-3}}{{a|time}}{{a|time:h:mm tt}}", "{{now-2h:epoch}}"]) checkFilters(ok, "t");
+});
+
+test("format 1.1: fetch.sign", () => {
+  const signed = (sign, secrets = [{ key: "key" }]) => ({
+    format: 1, id: "community.ptv", name: "PTV", kind: "json",
+    fetch: { url: "https://timetableapi.ptv.vic.gov.au/v3/departures/route_type/0/stop/{{settings.stop}}?devid={{settings.devid}}", sign },
+    pick: { title: "$.status.version" }, settings: [{ key: "stop" }, { key: "devid" }], secrets,
+  });
+  checkManifest(signed({ type: "hmac-sha1", key: "{{secret.key}}" }), "community.ptv");
+  checkManifest(signed({ type: "hmac-sha256", key: "{{secret.key}}", over: "path+query", param: "sig", case: "lower" }), "community.ptv");
+  for (const [sign, msg] of [
+    [{ type: "md5", key: "k" }, "hmac-sha1 or hmac-sha256"],
+    [{ type: "hmac-sha1" }, "fetch.sign.key"],
+    [{ type: "hmac-sha1", key: "k", over: "url" }, "path+query"],
+    [{ type: "hmac-sha1", key: "k", param: "a b" }, "fetch.sign.param"],
+    [{ type: "hmac-sha1", key: "k", case: "mixed" }, "upper or lower"],
+    ["hmac", "must be an object"],
+  ]) assert.throws(() => checkManifest(signed(sign), "community.ptv"), (e) => e.message.includes(msg), JSON.stringify(sign));
+  assert.throws(() => checkManifest(signed({ type: "hmac-sha1", key: "{{secret.key}}" }, []), "community.ptv"), /no secret "key"/);
+});
+
+test("minAppVersion", () => {
+  const meta = { name: "HN", summary: "s", author: { name: "Sam" }, tags: ["news"], version: "1.0.0", license: "MIT", needsSecrets: false, updated: "2026-10-19" };
+  checkMeta({ ...meta, minAppVersion: "0.7.0" }, { secrets: [] });
+  assert.throws(() => checkMeta({ ...meta, minAppVersion: "0.7" }, { secrets: [] }), /minAppVersion must be semver/);
 });

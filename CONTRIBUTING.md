@@ -182,16 +182,17 @@ Only `format`, `id`, `name` and `kind` are always needed. Unknown fields are ign
 | `name` | 1–60 characters, shown in Settings → Sources |
 | `description` | Up to 300 characters, shown under the name |
 | `kind` | `rss`, `json`, `ical` or `text` |
-| `fetch` | For `rss`, `json` and `ical`: `url` (`https://`, up to 2000 characters), optional `method` (`GET` or `POST`), optional `headers` (up to 20, like `{"Accept": "application/json"}`) and `every`: how often to fetch, at least `1m`, at most `7d`, default `15m`. Each fetch has 10 seconds and may be up to 2 MB. |
+| `fetch` | For `rss`, `json` and `ical`: `url` (`https://`, up to 2000 characters), optional `method` (`GET` or `POST`), optional `headers` (up to 20, like `{"Accept": "application/json"}`) and `every`: how often to fetch, at least `1m`, at most `7d`, default `15m`. Each fetch has 10 seconds and may be up to 2 MB. Optional `sign` (0.7.0+): see [Signed requests](#signed-requests-070-and-later). |
 | `every` | For `text` plugins (at the top level): how often the card is redrawn, at least `10s`, default `1m` |
-| `pick` | For `json`: `items` (optional), `id`, `title`, `body` and `time`, as JSONPath (see [example 2](#example-2-a-json-api)). A `json` plugin needs `pick.title` or a `card.template`. RSS, Atom and iCal need no `pick`. |
+| `pick` | For `json`: `items` (optional), `id`, `title`, `body` and `time`, as JSONPath (see [example 2](#example-2-a-json-api)). A `json` plugin needs `pick.title` or a `card.template`. RSS, Atom and iCal need no `pick`. From 0.7.0 also `fields`, `where`, `sort` and `as`: see [Lists: filter, sort and status cards](#lists-filter-sort-and-status-cards-070-and-later). |
 | `card.template` | The card's text, laid out over the whole board (up to 2000 characters). Without one, the card shows the source's name and the time across the top and the item below. |
 | `card.chip` | The corner colour: `red`, `orange`, `yellow`, `green`, `blue`, `violet`, `white` or `black` |
 | `card.align` | `center` (default) or `left` |
 | `card.pages` | `1`, `2` or `3`: long text continues on up to this many cards. Words are never split. |
+| `card.row`, `card.empty` | For status lists (0.7.0+): each item's line, and what the card says when no item is left |
 | `priority` | `ambient` (default) or `alert`: every new item interrupts the rotation for a minute. Use sparingly. |
 | `alertWhen` | Keywords that make a new item interrupt: `["keyword:outage", "keyword:launch"]` |
-| `maxItems` | 1–50 items taken from each fetch (default 10) |
+| `maxItems` | 1–50 items taken from each fetch (default 10), after `pick.where` and `pick.sort` |
 | `dwell` | How long the card stays up, `10s` to `1h`. Users can change it. |
 | `schedule` | When it may show: `{"days": ["mon", "tue", "wed", "thu", "fri"], "from": "07:00", "to": "10:00"}`. No days means every day; `from`/`to` may run past midnight. |
 | `settings` | Up to 30 fields for the user: `key` (letters, digits, `_`), `label`, `type` and `default`. Types: `text`, `number`, `toggle`, `select` (with `options`: values, or `{"value": …, "label": …}`), `date` (`2026-12-25`), `time` (`07:30`) and `lines` (a list, one per line). |
@@ -211,10 +212,30 @@ Placeholders go in `fetch.url`, `fetch.headers`, `card.template` and `pick` path
 | `{{title}}`, `{{body}}` | The item's title and body (from `pick`, or the feed item's title and summary) |
 | `{{time}}`, `{{time:HH:mm}}` | The item's time, or a calendar event's start |
 | `{{now}}`, `{{now:ddd d MMM}}` | The time now, in the board's time zone |
+| `{{now:epoch}}`, `{{now:epochms}}` | The time now as seconds (or milliseconds) since 1970, for APIs that want a timestamp (0.7.0+) |
+| `{{now-2h:epoch}}`, `{{now+30m:HH:mm}}` | Now plus or minus a duration (`90s`, `30m`, `2h`, `1h30m`, `1d`), with any format (0.7.0+) |
+| `{{field.name}}` | One of the item's `pick.fields` (0.7.0+) |
+| `{{rows}}`, `{{count}}` | A status list's lines (`card.row` for each item) and how many items it has (0.7.0+) |
 
 Time formats use `yyyy` `yy` (year), `MMMM` `MMM` `MM` `M` (October, Oct, 10, 10), `dddd` `ddd` (Monday, Mon), `dd` `d` (day of the month, 05 or 5), `HH` `H` (24-hour), `hh` `h` (12-hour), `mm` (minutes), `ss` (seconds) and `tt` (AM/PM). Text in `[brackets]` is kept as it is: `{{now:[WEEK OF] d MMM}}`. Dates work in addresses too, as in the On this day plugin: `https://…/onthisday/selected/{{now:MM}}/{{now:dd}}`.
 
-Every `{{settings.…}}` and `{{secret.…}}` you use must be declared under `settings` or `secrets`; the checks will tell you if one isn't.
+Every `{{settings.…}}` and `{{secret.…}}` you use must be declared under `settings` or `secrets`, and every `{{field.…}}` under `pick.fields`; the checks will tell you if one isn't.
+
+### Template filters (0.7.0 and later)
+
+Any placeholder can be followed by filters, applied left to right: `{{field.alt|num}}`, `{{settings.city|trim|upper}}`, `{{field.when|time:h:mm tt}}`.
+
+| Filter | |
+| --- | --- |
+| `upper`, `lower`, `trim` | Upper case, lower case, spaces trimmed from both ends |
+| `num` | A number with thousands separators and at most 2 decimals: `3200` → `3,200`, `-1234.5` → `-1,234.5` |
+| `round`, `round:n` | Rounded (halves away from zero) to a whole number, or to `n` decimals (0–6): `3.14159` → `3`, `round:2` → `3.14` |
+| `default:text` | `text` when the value is blank: `{{field.platform|default:-}}` |
+| `pad:n` | Pads to `n` tiles with blanks that aren't squeezed out, so columns line up: `pad:8` on the right, `pad:-3` on the left (right-aligned). Longer values are left as they are. |
+| `time`, `time:format` | A time (ISO 8601, or seconds or milliseconds since 1970) in the board's time zone: `{{field.when|time}}` → `8:42`, `{{field.when|time:HH:mm}}` |
+| `mins` | Whole minutes from now until that time (0 once it's passed): `{{field.when|mins}} MIN`. A status card using it counts down on the board. |
+
+A filter that doesn't apply leaves the value alone (`num` on `ground` is still `ground`). An unknown filter is refused when the plugin is checked.
 
 ### How the card is laid out
 
@@ -243,6 +264,68 @@ or, for services that want the key in a header:
 
 Each user enters their own key in the source's settings. Rattleboard keeps it in the device's credential store, only ever sends it to the address in `fetch`, and never shows it, logs it or exports it. In `meta.json`, set `"needsSecrets": true`, and say in the plugin's README where to get a key and whether it's free.
 
+### Lists: filter, sort and status cards (0.7.0 and later)
+
+For a JSON list (`pick.items`), these optional fields choose which items are used and in what order. They're applied in this order: **where**, then **sort**, then `maxItems`.
+
+```json
+"pick": {
+  "items": "$.ac[*]",
+  "id": "$.hex",
+  "title": "$.flight",
+  "fields": { "type": "$.t", "alt": "$.alt_baro", "flight": ["$.flight", "$.r"] },
+  "where": [
+    { "path": "$.alt_baro", "op": "!=", "value": "ground" },
+    { "path": "$.baro_rate", "op": ">", "value": 300, "when": { "setting": "phase", "is": "departures" } },
+    { "path": "$.direction_id", "op": "==", "value": "{{settings.direction}}" }
+  ],
+  "sort": { "path": "$.alt_baro", "order": "asc", "numeric": true },
+  "as": "status"
+},
+"maxItems": 3
+```
+
+- **`fields`**: up to 20 extra values per item, for templates as `{{field.type}}`. A field can be a list of up to five paths; the first one that has a value is used (here, the callsign, or the registration when there's none).
+- **`where`**: up to 20 conditions; an item is kept only if it meets all of them. `path` is relative to the item. `op` is one of `==` `!=` `>` `>=` `<` `<=` `contains` `exists` `missing`. When both sides are numbers (or text that is a plain number, like `"12"`), they're compared as numbers; otherwise as text, trimmed, ignoring the case of A–Z. A value that's missing or `null` never matches a comparison (not even `!=`); test it with `exists` or `missing`. `contains` on a list (like `"tags": ["rain", "wind"]`) checks for an element equal to the value.
+  - `value` can use settings: `"{{settings.direction}}"`. If that comes out blank, the condition is switched off, so a blank setting means "everything".
+  - `when` makes a condition apply only while a setting has one of the given values: `{"setting": "phase", "is": ["departures"]}`. That's how one plugin can offer "climbing / descending / all".
+- **`sort`**: by one `path`, `"order": "asc"` (default) or `"desc"`. `"numeric": true` sorts as numbers, `false` as text; leave it out to sort as numbers when every value is one. Items without the value always go last, and ties keep the API's order.
+- **`as`**: `"feed"` (the default) shows each new item once, like RSS. `"status"` shows the list as it is now, as one card: the template's `{{title}}`, `{{field.…}}` and so on are the first item, `{{rows}}` is `card.row` (default `{{title}}`) for every item, one per line, and `{{count}}` is how many there are. When no item is left, `card.empty` is shown (or nothing, without one). A status card is redrawn while it's on the board as its data or `|mins` change, at most once a minute.
+
+```json
+"card": {
+  "template": "{{settings.airport|upper}} DEPARTURES\n{{rows}}",
+  "row": "{{field.flight|pad:8}}{{field.type|pad:5}}{{field.alt|num}} FT",
+  "empty": "Nothing in the air just now",
+  "align": "left"
+}
+```
+
+```
+MEL DEPARTURES
+QLK1942 E190 1,100 FT
+QFA401  B738 3,200 FT
+VOZ825  B38M 5,900 FT
+```
+
+### Signed requests (0.7.0 and later)
+
+Some APIs, like PTV's Timetable API, want each request signed with your key instead of carrying it. `fetch.sign` does that:
+
+```json
+"fetch": {
+  "url": "https://timetableapi.ptv.vic.gov.au/v3/departures/route_type/0/stop/{{settings.stop}}?max_results=6&devid={{settings.devid}}",
+  "sign": { "type": "hmac-sha1", "key": "{{secret.key}}", "over": "path+query", "param": "signature", "case": "upper" }
+},
+"secrets": [{ "key": "key", "label": "PTV API key" }]
+```
+
+After the URL's placeholders are filled in, Rattleboard computes the HMAC (`hmac-sha1` or `hmac-sha256`) of its path and query as they're sent (`/v3/departures/route_type/0/stop/1071?max_results=6&devid=1000123`) with the key, writes it in hex (`"case"`: `upper`, the default, or `lower`), and adds it as one more query parameter (`"param"`, default `signature`): `...&devid=1000123&signature=1D59EE8E...`. `over` is always `path+query` for now. The key never leaves the device and is never logged.
+
+### Plugins that need a newer Rattleboard
+
+If your plugin uses anything marked 0.7.0 above, add `"minAppVersion": "0.7.0"` to `meta.json`. Older versions of Rattleboard then list it as "Needs Rattleboard 0.7.0 or later" and don't offer to install it (they'd ignore the new fields and show the wrong thing).
+
 ## 3. Test it on your board
 
 Before you send a plugin in, make sure it really works. You need the Rattleboard desktop app (or Rattleboard Web).
@@ -265,6 +348,13 @@ Before you send a plugin in, make sure it really works. You need the Rattleboard
    ```
 
    It asks your board for the card your source shows right now and saves its first page as `plugins/community.my-plugin/preview.json`. Use `--url http://<address>:7070` if the board isn't on this computer, and `--source <id>` if you have more than one source using the plugin.
+
+For a plugin whose real data you can't fetch right now (it needs a key you don't have, or nothing is happening), the desktop repository's `plugin_card` tool runs the plugin through the same engine against a saved sample response, signing included, and writes `preview.json`:
+
+```sh
+cargo run -p rattleboard-core --example plugin_card -- plugins/community.my-plugin/plugin.rattleboard-plugin.json \
+    --sample sample-response.json --settings '{"stop": "1071"}' --secret key=test --preview plugins/community.my-plugin/preview.json
+```
 
 If you'd rather write it by hand, it looks like this: `rows` and `cols`, then one list of tile codes per row (0 is blank, 1–26 are A–Z, 27–36 are 1–9 and 0, 37–62 are punctuation, 63–70 are colours and 71 is filled):
 
@@ -306,6 +396,7 @@ No other files go in the folder.
   "license": "MIT",
   "homepage": "https://example.com",
   "needsSecrets": false,
+  "minAppVersion": "0.7.0",
   "updated": "2026-10-19"
 }
 ```
@@ -315,6 +406,7 @@ No other files go in the folder.
 - `license`: an [SPDX id](https://spdx.org/licenses/); `MIT` unless you have a reason.
 - `homepage` (optional): the service's or your page, `https://`.
 - `needsSecrets`: `true` if, and only if, the manifest has `secrets`.
+- `minAppVersion` (optional): the oldest Rattleboard the plugin works with, as semver. Leave it out unless the plugin uses something newer (see [above](#plugins-that-need-a-newer-rattleboard)).
 - `updated`: today's date, as `YYYY-MM-DD`.
 
 For autocomplete in your editor, `meta.json` can start with `"$schema": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/schema/meta.schema.json"`. Any other field is refused, to catch typos.

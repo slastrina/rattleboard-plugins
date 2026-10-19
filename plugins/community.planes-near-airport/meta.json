@@ -1,0 +1,18 @@
+{
+  "name": "Planes near the airport",
+  "summary": "Aircraft climbing out of or coming in to an airport near you, live from adsb.lol. No key needed.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "transport",
+    "fun"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://adsb.lol",
+  "needsSecrets": false,
+  "minAppVersion": "0.7.0",
+  "updated": "2026-10-19"
+}

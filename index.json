@@ -19,6 +19,7 @@
       "homepage": "https://www.bbc.co.uk/news/world",
       "kind": "rss",
       "needsSecrets": false,
+      "minAppVersion": null,
       "settings": [],
       "secrets": [],
       "hosts": [
@@ -46,6 +47,7 @@
       "homepage": "https://www.coingecko.com",
       "kind": "json",
       "needsSecrets": false,
+      "minAppVersion": null,
       "settings": [
         {
           "key": "currency",
@@ -79,6 +81,7 @@
       "homepage": "https://frankfurter.dev",
       "kind": "json",
       "needsSecrets": false,
+      "minAppVersion": null,
       "settings": [
         {
           "key": "from",
@@ -117,6 +120,7 @@
       "homepage": "https://github.com",
       "kind": "json",
       "needsSecrets": false,
+      "minAppVersion": null,
       "settings": [
         {
           "key": "owner",
@@ -156,6 +160,7 @@
       "homepage": "https://news.ycombinator.com",
       "kind": "rss",
       "needsSecrets": false,
+      "minAppVersion": null,
       "settings": [],
       "secrets": [],
       "hosts": [
@@ -183,6 +188,7 @@
       "homepage": "https://wheretheiss.at",
       "kind": "json",
       "needsSecrets": false,
+      "minAppVersion": null,
       "settings": [],
       "secrets": [],
       "hosts": [
@@ -211,6 +217,7 @@
       "homepage": "https://en.wikipedia.org/wiki/Wikipedia:Selected_anniversaries",
       "kind": "json",
       "needsSecrets": false,
+      "minAppVersion": null,
       "settings": [],
       "secrets": [],
       "hosts": [
@@ -220,6 +227,179 @@
       "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.on-this-day/README.md",
       "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.on-this-day/preview.json",
       "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.on-this-day",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.planes-near-airport",
+      "name": "Planes near the airport",
+      "summary": "Aircraft climbing out of or coming in to an airport near you, live from adsb.lol. No key needed.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "transport",
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://adsb.lol",
+      "kind": "json",
+      "needsSecrets": false,
+      "minAppVersion": "0.7.0",
+      "settings": [
+        {
+          "key": "airport",
+          "label": "Airport name on the card",
+          "type": "text"
+        },
+        {
+          "key": "lat",
+          "label": "Latitude",
+          "type": "number"
+        },
+        {
+          "key": "lon",
+          "label": "Longitude",
+          "type": "number"
+        },
+        {
+          "key": "radius",
+          "label": "Radius (nautical miles, up to 250)",
+          "type": "number"
+        },
+        {
+          "key": "phase",
+          "label": "Show",
+          "type": "select"
+        },
+        {
+          "key": "ceiling",
+          "label": "Ignore aircraft above (feet; blank for no limit)",
+          "type": "text"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "api.adsb.lol"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.planes-near-airport/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.planes-near-airport/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.planes-near-airport/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.planes-near-airport",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.ptv-disruptions",
+      "name": "PTV disruptions",
+      "summary": "Current disruptions at your Melbourne station or stop, from PTV's Timetable API. Needs a free PTV key.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "transport"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://www.vic.gov.au/public-transport-timetable-api",
+      "kind": "json",
+      "needsSecrets": true,
+      "minAppVersion": "0.7.0",
+      "settings": [
+        {
+          "key": "devid",
+          "label": "PTV developer ID (devid)",
+          "type": "text"
+        },
+        {
+          "key": "stop",
+          "label": "Stop id (Flinders Street is 1071)",
+          "type": "text"
+        },
+        {
+          "key": "label",
+          "label": "Name on the card",
+          "type": "text"
+        }
+      ],
+      "secrets": [
+        {
+          "key": "key",
+          "label": "PTV API key"
+        }
+      ],
+      "hosts": [
+        "timetableapi.ptv.vic.gov.au"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-disruptions/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-disruptions/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-disruptions/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.ptv-disruptions",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.ptv-next-trains",
+      "name": "PTV next trains",
+      "summary": "The next departures from your Melbourne station or stop, from PTV's Timetable API. Needs a free PTV key.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "transport"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://www.vic.gov.au/public-transport-timetable-api",
+      "kind": "json",
+      "needsSecrets": true,
+      "minAppVersion": "0.7.0",
+      "settings": [
+        {
+          "key": "devid",
+          "label": "PTV developer ID (devid)",
+          "type": "text"
+        },
+        {
+          "key": "stop",
+          "label": "Stop id (Flinders Street is 1071)",
+          "type": "text"
+        },
+        {
+          "key": "label",
+          "label": "Name on the card",
+          "type": "text"
+        },
+        {
+          "key": "route_type",
+          "label": "Mode",
+          "type": "select"
+        },
+        {
+          "key": "route",
+          "label": "Only this route id (optional)",
+          "type": "text"
+        },
+        {
+          "key": "direction",
+          "label": "Only this direction id (optional)",
+          "type": "text"
+        }
+      ],
+      "secrets": [
+        {
+          "key": "key",
+          "label": "PTV API key"
+        }
+      ],
+      "hosts": [
+        "timetableapi.ptv.vic.gov.au"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-next-trains/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-next-trains/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-next-trains/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.ptv-next-trains",
       "updated": "2026-10-19"
     },
     {
@@ -239,6 +419,7 @@
       "homepage": "https://sunrise-sunset.org",
       "kind": "json",
       "needsSecrets": false,
+      "minAppVersion": null,
       "settings": [
         {
           "key": "lat",

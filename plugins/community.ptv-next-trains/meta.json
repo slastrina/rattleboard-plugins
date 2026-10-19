@@ -1,0 +1,17 @@
+{
+  "name": "PTV next trains",
+  "summary": "The next departures from your Melbourne station or stop, from PTV's Timetable API. Needs a free PTV key.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "transport"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://www.vic.gov.au/public-transport-timetable-api",
+  "needsSecrets": true,
+  "minAppVersion": "0.7.0",
+  "updated": "2026-10-19"
+}

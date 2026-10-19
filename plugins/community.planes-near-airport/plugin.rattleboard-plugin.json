@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "id": "community.planes-near-airport",
+  "name": "Planes near the airport",
+  "description": "Aircraft climbing out of (or coming in to) an airport near you, from adsb.lol: no key needed",
+  "kind": "json",
+  "fetch": {
+    "url": "https://api.adsb.lol/v2/point/{{settings.lat}}/{{settings.lon}}/{{settings.radius}}",
+    "every": "1m"
+  },
+  "pick": {
+    "items": "$.ac[*]",
+    "id": "$.hex",
+    "title": "$.flight",
+    "as": "status",
+    "fields": {
+      "flight": ["$.flight", "$.r", "$.hex"],
+      "type": "$.t",
+      "alt": "$.alt_baro"
+    },
+    "where": [
+      { "path": "$.alt_baro", "op": "!=", "value": "ground" },
+      { "path": "$.alt_baro", "op": "<=", "value": "{{settings.ceiling}}" },
+      { "path": "$.baro_rate", "op": ">", "value": 300, "when": { "setting": "phase", "is": "departures" } },
+      { "path": "$.baro_rate", "op": "<", "value": -300, "when": { "setting": "phase", "is": "arrivals" } }
+    ],
+    "sort": { "path": "$.alt_baro", "order": "asc", "numeric": true }
+  },
+  "maxItems": 4,
+  "card": {
+    "template": "{{settings.airport|upper}} {{settings.phase|upper}}\n{{rows}}",
+    "row": "{{field.flight|pad:8}}{{field.type|default:?|pad:5}}{{field.alt|num}} FT",
+    "empty": "{{settings.airport|upper}} {{settings.phase|upper}}\nNothing in the air just now",
+    "chip": "blue",
+    "align": "left"
+  },
+  "dwell": "30s",
+  "settings": [
+    { "key": "airport", "label": "Airport name on the card", "type": "text", "default": "MEL" },
+    { "key": "lat", "label": "Latitude", "type": "number", "default": -37.6733 },
+    { "key": "lon", "label": "Longitude", "type": "number", "default": 144.8433 },
+    { "key": "radius", "label": "Radius (nautical miles, up to 250)", "type": "number", "default": 5 },
+    { "key": "phase", "label": "Show", "type": "select", "default": "departures", "options": [
+      { "value": "departures", "label": "Departures (climbing)" },
+      { "value": "arrivals", "label": "Arrivals (descending)" },
+      { "value": "airborne", "label": "All airborne" }
+    ] },
+    { "key": "ceiling", "label": "Ignore aircraft above (feet; blank for no limit)", "type": "text", "default": "10000" }
+  ]
+}

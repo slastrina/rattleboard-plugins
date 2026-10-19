@@ -8,7 +8,9 @@
 //                                              bumped its meta.json version (for pull requests)
 //
 // No dependencies (Node 20+). The manifest rules mirror the desktop app's validator
-// (rattleboard-core/src/plugins.rs, manifest format 1), plus the community repo's own rules:
+// (rattleboard-core/src/plugins.rs, manifest format 1 with the 1.1 additions: pick.where,
+// pick.sort, pick.fields, pick.as, card.row, card.empty, template filters and fetch.sign),
+// plus the community repo's own rules:
 // no command plugins, https:// only, id == folder name, every placeholder declared.
 // index.json is deterministic: plugins sorted by id, and "generated" is the newest "updated"
 // date, so the same folders always give the same file.
@@ -36,6 +38,8 @@ const MAX_MANIFEST = 64 * 1024;
 const MAX_README = 20 * 1024;
 const MAX_PREVIEW = 32 * 1024;
 const SET_BY_YOU = "set by you";
+const OPS = ["==", "!=", ">", ">=", "<", "<=", "contains", "exists", "missing"];
+const FILTERS = ["upper", "lower", "trim", "num", "round", "default", "pad", "time", "mins"];
 
 // ------------------------------------------------------------------ helpers
 
@@ -122,9 +126,28 @@ function stripPlaceholders(s) {
   }
 }
 
-/** Every {{name}} in a string, trimmed, without a :format. */
+/** Every {{name}} in a string, trimmed, without a :format or |filters. */
 function placeholders(s) {
-  return [...s.matchAll(/\{\{([^}]*)\}\}/g)].map((m) => m[1].split(":")[0].trim());
+  return [...s.matchAll(/\{\{([^}]*)\}\}/g)].map((m) => m[1].split("|")[0].split(":")[0].trim());
+}
+
+/** Format 1.1: every {{...|filter[:arg]}} names a known filter with a valid argument. */
+export function checkFilters(t, what) {
+  for (const m of t.matchAll(/\{\{([^}]*)\}\}/g)) {
+    for (const f of m[1].split("|").slice(1)) {
+      const i = f.indexOf(":");
+      const name = (i < 0 ? f : f.slice(0, i)).trim();
+      const arg = i < 0 ? null : f.slice(i + 1);
+      const int = (a) => (/^\s*[+-]?\d+\s*$/.test(a ?? "") ? Number(a) : NaN);
+      const ok =
+        (["upper", "lower", "trim", "num", "mins"].includes(name) && arg === null) ||
+        (name === "round" && (arg === null || (/^\s*\+?\d+\s*$/.test(arg) && Number(arg) <= 6))) ||
+        (name === "default" && arg !== null) ||
+        (name === "pad" && Number.isInteger(int(arg)) && int(arg) !== 0 && Math.abs(int(arg)) <= 40) ||
+        name === "time";
+      if (!ok) throw new Error(FILTERS.includes(name) ? `${what}: |${f} has a missing or invalid argument` : `${what}: unknown filter |${name}; use ${FILTERS.join(", ")}`);
+    }
+  }
 }
 
 const optionValue = (o) => (isObj(o) && "value" in o ? o.value : o);
@@ -213,6 +236,7 @@ export function checkManifest(m, folder) {
   // fetch
   let url = "";
   let headers = {};
+  let signKey = "";
   const f = m.fetch;
   if (!absent(f) && !isObj(f)) err("fetch must be an object");
   if (http) {
@@ -239,6 +263,20 @@ export function checkManifest(m, folder) {
             else if (!HEADER_NAME.test(k) || v.length > 4000) err(`Header ${k} isn't valid`);
           }
           headers = f.headers;
+        }
+      }
+      guard(() => checkFilters(url, "fetch.url"));
+      for (const v of Object.values(headers)) if (isStr(v)) guard(() => checkFilters(v, "fetch.headers"));
+      if (!absent(f.sign)) {
+        const g = f.sign;
+        if (!isObj(g)) err("fetch.sign must be an object");
+        else {
+          if (!["hmac-sha1", "hmac-sha256"].includes(g.type)) err("fetch.sign.type must be hmac-sha1 or hmac-sha256");
+          if (!isStr(g.key) || !g.key.trim() || g.key.trim().length > 500) err("fetch.sign.key must be the signing key, like {{secret.key}}");
+          else signKey = g.key;
+          if (!absent(g.over) && g.over !== "path+query") err(`fetch.sign.over ${JSON.stringify(g.over)} must be path+query`);
+          if (!absent(g.param) && !(isStr(g.param) && /^[A-Za-z0-9_.-]{1,40}$/.test(g.param))) err("fetch.sign.param must be 1–40 letters, digits, _ . or -");
+          if (!absent(g.case) && !["upper", "lower"].includes(g.case)) err(`fetch.sign.case ${JSON.stringify(g.case)} must be upper or lower`);
         }
       }
     }
@@ -273,10 +311,85 @@ export function checkManifest(m, folder) {
         });
       }
   }
+  // Format 1.1 pick additions
+  const fieldNames = [];
+  const whenSettings = [];
+  const whereValues = [];
+  let status = false;
+  const path11 = (v, what) => {
+    if (!isStr(v) || !v.trim()) return err(`${what} needs a path like $.name`);
+    if (v.length > 2000) return err(`${what} is too long`);
+    if (!v.includes("{{"))
+      guard(() => {
+        try {
+          parsePath(v);
+        } catch (e) {
+          throw new Error(`${what}: ${e.message}`);
+        }
+      });
+  };
+  if (isObj(pick)) {
+    const extra = ["fields", "where", "sort", "as"].filter((k) => !absent(pick[k]));
+    if (extra.length && kind !== "json") err("pick.fields, pick.where, pick.sort and pick.as are for json plugins");
+    if (!absent(pick.fields)) {
+      if (!isObj(pick.fields) || Object.keys(pick.fields).length > 20) err("pick.fields must be an object of at most 20 names and paths");
+      else
+        for (const [k, v] of Object.entries(pick.fields)) {
+          if (!validKey(k)) err(`pick.fields name ${JSON.stringify(k)} must be letters, digits or _`);
+          fieldNames.push(k);
+          if (Array.isArray(v) && v.length >= 1 && v.length <= 5) v.forEach((p) => path11(p, `pick.fields.${k}`));
+          else if (isStr(v)) path11(v, `pick.fields.${k}`);
+          else err(`pick.fields.${k} must be a path or a list of up to 5 paths`);
+        }
+    }
+    if (!absent(pick.where)) {
+      if (!Array.isArray(pick.where) || pick.where.length > 20) err("pick.where must be a list of at most 20 conditions");
+      else
+        for (const c of pick.where) {
+          if (!isObj(c)) {
+            err('each pick.where condition is an object like {"path": "$.x", "op": "==", "value": 1}');
+            continue;
+          }
+          path11(c.path, "pick.where");
+          if (!OPS.includes(c.op)) err(`pick.where op ${JSON.stringify(c.op)} must be one of ${OPS.join(" ")}`);
+          const unary = c.op === "exists" || c.op === "missing";
+          if (unary && !absent(c.value)) err(`pick.where ${c.op} takes no value`);
+          if (!unary && absent(c.value)) err(`pick.where ${c.op} needs a value`);
+          if (!absent(c.value)) {
+            if (!["string", "number", "boolean"].includes(typeof c.value)) err("pick.where value must be a string, number or true/false");
+            if (isStr(c.value)) {
+              if (c.value.length > 500) err("pick.where value is too long");
+              if (c.value.includes("{{secret.")) err("Secrets can't be used in pick.where");
+              guard(() => checkFilters(c.value, "pick.where value"));
+              whereValues.push(c.value);
+            }
+          }
+          if (!absent(c.when)) {
+            const w = c.when;
+            const is = isObj(w) ? (isStr(w.is) ? [w.is] : w.is) : null;
+            if (!isObj(w) || !isStr(w.setting) || !Array.isArray(is) || is.length < 1 || is.length > 20 || !is.every(isStr)) err('pick.where when must be {"setting": "key", "is": ["value"]}');
+            else whenSettings.push(w.setting);
+          }
+        }
+    }
+    if (!absent(pick.sort)) {
+      const so = pick.sort;
+      if (!isObj(so)) err('pick.sort must be {"path": "$.x", "order": "asc"}');
+      else {
+        path11(so.path, "pick.sort");
+        if (!absent(so.order) && !["asc", "desc"].includes(so.order)) err(`pick.sort.order ${JSON.stringify(so.order)} must be asc or desc`);
+        if (!absent(so.numeric) && typeof so.numeric !== "boolean") err("pick.sort.numeric must be true or false");
+      }
+    }
+    if (!absent(pick.as) && !["feed", "status"].includes(pick.as)) err(`pick.as ${JSON.stringify(pick.as)} must be feed or status`);
+    status = pick.as === "status";
+    if ((!absent(pick.where) || !absent(pick.sort) || status) && !(isStr(pick.items) && pick.items.trim())) err("pick.where, pick.sort and pick.as need pick.items (the list)");
+  }
 
   // card
   const card = m.card;
   let template = "";
+  const cardExtra = [];
   if (!absent(card)) {
     if (!isObj(card)) err("card must be an object");
     else {
@@ -286,7 +399,21 @@ export function checkManifest(m, folder) {
           template = card.template;
           if (template.length > 2000) err("card.template is too long");
           if (template.includes("{{secret.")) err("Secrets can only be used in fetch.url and fetch.headers, never in card.template");
+          guard(() => checkFilters(template, "card.template"));
         }
+      }
+      for (const k of ["row", "empty"]) {
+        const t = card[k];
+        if (absent(t)) continue;
+        if (!isStr(t)) {
+          err(`card.${k} must be a string`);
+          continue;
+        }
+        if (t.length > 2000) err(`card.${k} is too long`);
+        if (t.includes("{{secret.")) err(`Secrets can only be used in fetch.url and fetch.headers, never in card.${k}`);
+        guard(() => checkFilters(t, `card.${k}`));
+        cardExtra.push(t);
+        if (t.trim() && !status) err('card.row and card.empty are for "pick": {"as": "status"}');
       }
       const c = card.chip;
       if (!absent(c)) {
@@ -386,7 +513,9 @@ export function checkManifest(m, folder) {
   }
 
   // Community rule: every {{settings.x}} / {{secret.x}} refers to something declared.
-  const used = [url, ...Object.values(headers).filter(isStr), template, ...(isObj(pick) ? Object.values(pick).filter(isStr) : [])].flatMap(placeholders);
+  const used = [url, signKey, ...Object.values(headers).filter(isStr), template, ...cardExtra, ...whereValues, ...(isObj(pick) ? Object.values(pick).filter(isStr) : [])].flatMap(placeholders);
+  for (const p of [template, ...cardExtra].flatMap(placeholders)) if (p.startsWith("field.") && !fieldNames.includes(p.slice(6))) err(`{{${p}}} is used but pick.fields has no "${p.slice(6)}"`);
+  for (const k of whenSettings) if (!settings.some((x) => x.key === k)) err(`pick.where: when.setting ${JSON.stringify(k)} isn't one of the settings`);
   for (const p of used) {
     if (p.startsWith("settings.") && !settings.some((x) => x.key === p.slice(9))) err(`{{${p}}} is used but there's no setting "${p.slice(9)}"`);
     if (p.startsWith("secret.") && !secrets.some((x) => x.key === p.slice(7))) err(`{{${p}}} is used but there's no secret "${p.slice(7)}"`);
@@ -407,7 +536,7 @@ export function hostsOf(url) {
 
 // ------------------------------------------------------------------ meta.json and preview.json
 
-const META_KEYS = new Set(["$schema", "name", "summary", "author", "tags", "version", "license", "homepage", "needsSecrets", "updated"]);
+const META_KEYS = new Set(["$schema", "name", "summary", "author", "tags", "version", "license", "homepage", "needsSecrets", "updated", "minAppVersion"]);
 const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
 
 export function checkMeta(meta, manifestFacts) {
@@ -443,6 +572,7 @@ export function checkMeta(meta, manifestFacts) {
   if (typeof meta.needsSecrets !== "boolean") err("needsSecrets must be true or false");
   else if (manifestFacts && meta.needsSecrets !== manifestFacts.secrets.length > 0) err(`needsSecrets must be ${manifestFacts.secrets.length > 0} (the manifest declares ${manifestFacts.secrets.length} secret(s))`);
   if (!isStr(meta.updated) || !validDate(meta.updated)) err('updated must be a date like "2026-10-19"');
+  if (!absent(meta.minAppVersion) && (!isStr(meta.minAppVersion) || !SEMVER.test(meta.minAppVersion))) err('minAppVersion must be semver, like "0.7.0"');
   if (errors.length) throw new Error(errors.join("\n"));
 }
 
@@ -528,6 +658,7 @@ function checkFolder(folder) {
       homepage: meta.homepage ?? null,
       kind: facts.kind,
       needsSecrets: meta.needsSecrets,
+      minAppVersion: meta.minAppVersion ?? null,
       settings: facts.settings.map((s) => ({ key: s.key, label: s.label, type: s.type })),
       secrets: facts.secrets.map((s) => ({ key: s.key, label: s.label })),
       hosts: hostsOf(facts.url),
