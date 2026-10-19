@@ -39,9 +39,30 @@
         "rss",
         "json",
         "ical",
-        "text"
+        "text",
+        "script"
       ],
-      "description": "command plugins are not accepted in this repo"
+      "description": "command plugins are not accepted in this repo; script needs Rattleboard 0.8.0"
+    },
+    "script": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-][A-Za-z0-9._-]{0,96}\\.js$",
+      "description": "For script plugins (0.8.0+): the JavaScript module next to the manifest, usually script.js"
+    },
+    "hosts": {
+      "type": "array",
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^(\\*\\.)?[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)+\\.?$"
+      },
+      "description": "For script plugins: the only hosts ctx.fetch may reach (exact names, or *.example.com for any subdomain); [] for none"
+    },
+    "permissions": {
+      "type": "array",
+      "maxItems": 0,
+      "description": "Reserved for script plugins; none are defined yet"
     },
     "fetch": {
       "type": "object",
@@ -522,6 +543,43 @@
             }
           }
         ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "script"
+          }
+        },
+        "required": [
+          "kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "script",
+          "hosts"
+        ],
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "fetch"
+              ]
+            },
+            {
+              "required": [
+                "pick"
+              ]
+            },
+            {
+              "required": [
+                "scriptInline"
+              ]
+            }
+          ]
+        }
       }
     }
   ],

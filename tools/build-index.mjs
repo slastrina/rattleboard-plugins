@@ -9,14 +9,17 @@
 //
 // No dependencies (Node 20+). The manifest rules mirror the desktop app's validator
 // (rattleboard-core/src/plugins.rs, manifest format 1 with the 1.1 additions: pick.where,
-// pick.sort, pick.fields, pick.as, card.row, card.empty, template filters and fetch.sign),
-// plus the community repo's own rules:
-// no command plugins, https:// only, id == folder name, every placeholder declared.
+// pick.sort, pick.fields, pick.as, card.row, card.empty, template filters and fetch.sign, and
+// script plugins from 0.8.0), plus the community repo's own rules:
+// no command plugins, https:// only, id == folder name, every placeholder declared; a script
+// plugin's code is a reviewed script.js (64 KB at most, no imports, parses as a module) and
+// it may only reach public host names.
 // index.json is deterministic: plugins sorted by id, and "generated" is the newest "updated"
 // date, so the same folders always give the same file.
 
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdtempSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
+import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 
@@ -33,13 +36,17 @@ const TREE = `${REPO}/tree/main`;
 const MANIFEST_FILE = "plugin.rattleboard-plugin.json";
 const ALLOWED_FILES = new Set([MANIFEST_FILE, "meta.json", "README.md", "preview.json"]);
 const TAGS = ["news", "weather", "sport", "finance", "transport", "space", "calendar", "fun", "home", "tech", "other"];
-const KINDS = ["rss", "json", "ical", "text"]; // the desktop also has "command": never in this repo
+const KINDS = ["rss", "json", "ical", "text", "script"]; // the desktop also has "command": never in this repo
 const SETTING_TYPES = ["text", "number", "toggle", "select", "date", "time", "lines"];
 const CHIPS = ["red", "orange", "yellow", "green", "blue", "violet", "white", "black"];
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 const MAX_MANIFEST = 64 * 1024;
 const MAX_README = 20 * 1024;
 const MAX_PREVIEW = 32 * 1024;
+const MAX_SCRIPT = 64 * 1024;
+const MAX_HOSTS = 20;
+/** Script plugins need Rattleboard 0.8.0 or later. */
+const SCRIPT_APP = "0.8.0";
 const SET_BY_YOU = "set by you";
 const OPS = ["==", "!=", ">", ">=", "<", "<=", "contains", "exists", "missing"];
 const FILTERS = ["upper", "lower", "trim", "num", "round", "default", "pad", "time", "mins"];
@@ -153,6 +160,81 @@ export function checkFilters(t, what) {
   }
 }
 
+/**
+ * A script plugin's `hosts` entry, as the desktop checks it (rattleboard-core/src/script.rs):
+ * a host name, or *.domain for any subdomain; lower-cased. Here only public names are allowed:
+ * no IP addresses, localhost, single words or local-network suffixes.
+ */
+export function checkHost(h) {
+  if (!isStr(h)) throw new Error("hosts must be a list of host names");
+  const p = h.trim().replace(/\.$/, "").toLowerCase();
+  const bad = () => new Error(`hosts: ${JSON.stringify(h)} isn't a host name like api.example.com or *.example.com`);
+  const wild = p.startsWith("*.");
+  const name = wild ? p.slice(2) : p;
+  if (!name || name.length > 253) throw bad();
+  const labels = name.split(".");
+  if (!labels.every((l) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(l))) throw bad();
+  if (wild && labels.length < 2) throw new Error(`hosts: ${JSON.stringify(h)} is too broad; a wildcard needs a domain like *.example.com`);
+  if (labels.length < 2 || /^[0-9.]+$/.test(name) || /\.(local|lan|home\.arpa|internal|localhost)$/.test(name) || name === "localhost") {
+    throw new Error(`hosts: ${JSON.stringify(h)} must be a public host name in this repo (no addresses on a home network)`);
+  }
+  return p;
+}
+
+/**
+ * Checks a script plugin's code: at most 64 KB of UTF-8, an ES module with a default export,
+ * no imports (outside strings and comments), and it parses (node --check).
+ */
+export function checkScript(bytes, file = "script.js") {
+  if (bytes.length > MAX_SCRIPT) throw new Error(`${file} is larger than 64 KB`);
+  const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  const code = stripLiterals(text);
+  if (/(^|[^.\w$])import\s*[\s{*("'`]/.test(code) || /(^|[^.\w$])import\s*\./.test(code)) throw new Error(`${file}: scripts can't import anything (static or dynamic)`);
+  if (/(^|[^.\w$])(eval|Function)\s*\(/.test(code)) throw new Error(`${file}: eval and Function aren't available to scripts`);
+  if (!/(^|[^.\w$])export\s+default\b/.test(code)) throw new Error(`${file} must have a default export: export default async function (ctx) { ... }`);
+  const dir = mkdtempSync(join(tmpdir(), "rb-script-"));
+  try {
+    const f = join(dir, "script.mjs");
+    writeFileSync(f, text);
+    execFileSync(process.execPath, ["--check", f], { stdio: ["ignore", "pipe", "pipe"] });
+  } catch (e) {
+    const msg = String(e.stderr || e.message).split("\n").map((l) => l.trim()).filter((l) => /Error/.test(l))[0] || "it doesn't parse";
+    throw new Error(`${file} doesn't parse as a module: ${msg}`);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+/** The code with comments, strings and template text blanked out (regex literals aren't). */
+export function stripLiterals(src) {
+  let out = "";
+  let i = 0;
+  const n = src.length;
+  while (i < n) {
+    const c = src[i];
+    const d = src[i + 1];
+    if (c === "/" && d === "/") {
+      while (i < n && src[i] !== "\n") i++;
+    } else if (c === "/" && d === "*") {
+      i += 2;
+      while (i < n && !(src[i] === "*" && src[i + 1] === "/")) i++;
+      i += 2;
+    } else if (c === '"' || c === "'" || c === "`") {
+      i++;
+      while (i < n && src[i] !== c) {
+        if (src[i] === "\\") i++;
+        i++;
+      }
+      i++;
+      out += " 0 ";
+    } else {
+      out += c;
+      i++;
+    }
+  }
+  return out;
+}
+
 const optionValue = (o) => (isObj(o) && "value" in o ? o.value : o);
 const sameJson = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const validKey = (k) => isStr(k) && k.length >= 1 && k.length <= 40 && /^[A-Za-z0-9_]+$/.test(k);
@@ -235,6 +317,21 @@ export function checkManifest(m, folder) {
   if (kind === "command") err("Command plugins aren't accepted here: they run programs on the user's computer, and plugin links refuse them");
   else if (!KINDS.includes(kind)) err(`kind must be one of ${KINDS.join(", ")}`);
   const http = ["rss", "json", "ical"].includes(kind);
+  const script = kind === "script";
+  let hosts = [];
+  let scriptFile = null;
+  if (script) {
+    if (!absent(m.fetch)) err('A script plugin fetches with ctx.fetch: "fetch" is for rss, json and ical plugins');
+    if (absent(m.hosts)) err('A script plugin needs "hosts": the addresses it may fetch from, like ["api.example.com"], or [] if it fetches nothing');
+    else if (!Array.isArray(m.hosts) || m.hosts.length > MAX_HOSTS) err(`hosts must be a list of at most ${MAX_HOSTS} host names`);
+    else for (const h of m.hosts) guard(() => hosts.includes(checkHost(h)) || hosts.push(checkHost(h)));
+    if (!absent(m.permissions) && !(Array.isArray(m.permissions) && m.permissions.length === 0)) err("permissions: none are defined yet; leave it out or []");
+    if (!absent(m.scriptInline)) err('In this repo a script\'s code goes in its own file: "script": "script.js", not scriptInline');
+    if (!isStr(m.script) || !/^[A-Za-z0-9_-][A-Za-z0-9._-]{0,96}\.js$/.test(m.script)) err('A script plugin needs "script": "script.js", the file next to the manifest');
+    else scriptFile = m.script;
+    if (!absent(m.pick)) err("pick is for json plugins: a script returns its own items");
+    if (isObj(m.card) && !absent(m.card.template)) err("A script lays out its own card: card.template isn't used by script plugins");
+  } else for (const k of ["hosts", "script", "scriptInline", "permissions"]) if (!absent(m[k])) err(`"${k}" is only for script plugins`);
 
   // fetch
   let url = "";
@@ -288,10 +385,10 @@ export function checkManifest(m, folder) {
 
   // every
   const everyV = [isObj(f) ? f.every : undefined, isObj(m.run) ? m.run.every : undefined, m.every].find((v) => !absent(v));
-  const [minEvery, defEvery] = kind === "text" ? [10, 60] : [60, 900];
+  const [minEvery, defEvery] = kind === "text" || (script && hosts.length === 0) ? [10, 60] : [60, 900];
   let every = defEvery;
   if (!absent(everyV)) guard(() => (every = duration(everyV)));
-  if (every < minEvery || every > 7 * 86400) err(`every must be at least ${minEvery === 60 ? "1m" : "10s"} for a ${kind} plugin`);
+  if (every < minEvery || every > 7 * 86400) err(script ? "every must be at least 1m for a script plugin that fetches (10s for one with no hosts)" : `every must be at least ${minEvery === 60 ? "1m" : "10s"} for a ${kind} plugin`);
 
   // pick
   const pick = m.pick;
@@ -526,7 +623,7 @@ export function checkManifest(m, folder) {
   if (isObj(pick) && Object.values(pick).some((v) => isStr(v) && v.includes("{{secret."))) err("Secrets can't be used in pick paths");
 
   if (errors.length) throw new Error(errors.join("\n"));
-  return { id, name, kind, url, every, settings, secrets };
+  return { id, name, kind, url, every, settings, secrets, hosts, script: scriptFile };
 }
 
 /** The host names a URL template fetches from; a host made from placeholders is "set by you". */
@@ -543,6 +640,7 @@ const META_KEYS = new Set(["$schema", "name", "summary", "author", "tags", "vers
 const SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?$/;
 
 export function checkMeta(meta, manifestFacts) {
+  const scriptKind = manifestFacts && manifestFacts.kind === "script";
   const errors = [];
   const err = (m) => errors.push(`meta.json: ${m}`);
   if (!isObj(meta)) throw new Error("meta.json must be a JSON object");
@@ -576,6 +674,7 @@ export function checkMeta(meta, manifestFacts) {
   else if (manifestFacts && meta.needsSecrets !== manifestFacts.secrets.length > 0) err(`needsSecrets must be ${manifestFacts.secrets.length > 0} (the manifest declares ${manifestFacts.secrets.length} secret(s))`);
   if (!isStr(meta.updated) || !validDate(meta.updated)) err('updated must be a date like "2026-10-19"');
   if (!absent(meta.minAppVersion) && (!isStr(meta.minAppVersion) || !SEMVER.test(meta.minAppVersion))) err('minAppVersion must be semver, like "0.7.0"');
+  else if (scriptKind && (absent(meta.minAppVersion) || semverCmp(meta.minAppVersion, SCRIPT_APP) < 0)) err(`minAppVersion must be "${SCRIPT_APP}" or later for a script plugin`);
   if (errors.length) throw new Error(errors.join("\n"));
 }
 
@@ -615,8 +714,14 @@ function checkFolder(folder) {
   const dir = join(PLUGINS, folder);
   const errors = [];
   const files = readdirSync(dir);
+  // A script plugin's file is allowed too: the name its manifest gives.
+  let scriptName = null;
+  try {
+    const raw = JSON.parse(readFileSync(join(dir, MANIFEST_FILE), "utf8"));
+    if (isObj(raw) && raw.kind === "script" && isStr(raw.script)) scriptName = raw.script;
+  } catch {}
   for (const f of files) {
-    if (!ALLOWED_FILES.has(f)) errors.push(`unexpected file "${f}" (a folder holds only ${[...ALLOWED_FILES].join(", ")})`);
+    if (!ALLOWED_FILES.has(f) && f !== scriptName) errors.push(`unexpected file "${f}" (a folder holds only ${[...ALLOWED_FILES].join(", ")}, and a script plugin's script.js)`);
     else if (!statSync(join(dir, f)).isFile()) errors.push(`"${f}" must be a file`);
   }
   if (!/^[a-z0-9.-]{3,100}$/.test(folder)) errors.push("the folder name is the plugin id: 3–100 lower-case letters, digits, dots or dashes");
@@ -632,6 +737,15 @@ function checkFolder(folder) {
     checkMeta(meta, facts);
   } catch (e) {
     errors.push(...e.message.split("\n").map((m) => (m.startsWith("meta.json") ? m : `meta.json: ${m}`)));
+  }
+  if (facts && facts.script) {
+    if (!files.includes(facts.script)) errors.push(`${facts.script} is missing (the manifest's "script")`);
+    else
+      try {
+        checkScript(readFileSync(join(dir, facts.script)), facts.script);
+      } catch (e) {
+        errors.push(e.message);
+      }
   }
   const hasReadme = files.includes("README.md");
   if (hasReadme && statSync(join(dir, "README.md")).size > MAX_README) errors.push("README.md must be at most 20 KB");
@@ -664,7 +778,7 @@ function checkFolder(folder) {
       minAppVersion: meta.minAppVersion ?? null,
       settings: facts.settings.map((s) => ({ key: s.key, label: s.label, type: s.type })),
       secrets: facts.secrets.map((s) => ({ key: s.key, label: s.label })),
-      hosts: hostsOf(facts.url),
+      hosts: facts.kind === "script" ? facts.hosts : hostsOf(facts.url),
       manifestUrl: `${base}/${MANIFEST_FILE}`,
       readmeUrl: hasReadme ? `${base}/README.md` : null,
       previewUrl: hasPreview ? `${base}/preview.json` : null,

@@ -1,8 +1,9 @@
 // Run with `npm test`. The manifest cases mirror the desktop app's own tests
 // (rattleboard-core/src/plugins.rs, `manifests`), so the two validators stay in step.
 import { test } from "node:test";
+import { readdirSync, readFileSync } from "node:fs";
 import assert from "node:assert/strict";
-import { checkManifest, checkMeta, checkPreview, checkFilters, duration, parsePath, hostsOf } from "./build-index.mjs";
+import { checkManifest, checkMeta, checkPreview, checkFilters, duration, parsePath, hostsOf, checkHost, checkScript, stripLiterals } from "./build-index.mjs";
 
 const hn = () => ({
   format: 1, id: "community.hn", name: "Hacker News", kind: "rss",
@@ -179,4 +180,99 @@ test("minAppVersion", () => {
   const meta = { name: "HN", summary: "s", author: { name: "Sam" }, tags: ["news"], version: "1.0.0", license: "MIT", needsSecrets: false, updated: "2026-10-19" };
   checkMeta({ ...meta, minAppVersion: "0.7.0" }, { secrets: [] });
   assert.throws(() => checkMeta({ ...meta, minAppVersion: "0.7" }, { secrets: [] }), /minAppVersion must be semver/);
+});
+
+// ---------------------------------------------------------------- script plugins (0.8.0)
+
+const joke = () => ({
+  format: 1, id: "community.joke", name: "Joke", kind: "script", script: "script.js",
+  hosts: ["icanhazdadjoke.com", "*.Example.org"], every: "1h",
+  settings: [{ key: "lang", type: "text", default: "en" }], secrets: [{ key: "token", label: "Token" }],
+});
+
+test("script plugins: a good manifest passes", () => {
+  const f = checkManifest(joke(), "community.joke");
+  assert.deepEqual(f.hosts, ["icanhazdadjoke.com", "*.example.org"]);
+  assert.equal(f.script, "script.js");
+  assert.equal(f.every, 3600);
+  // No hosts: it may run as often as every 10 s, and defaults to a minute.
+  const pure = { ...joke(), hosts: [] };
+  delete pure.every;
+  assert.equal(checkManifest(pure).every, 60);
+  assert.equal(checkManifest({ ...pure, every: "10s" }).every, 10);
+});
+
+test("script plugins: refusals", () => {
+  const cases = [
+    [{ hosts: undefined }, 'needs "hosts"'],
+    [{ hosts: "x.com" }, "hosts must be a list"],
+    [{ hosts: ["https://x.com"] }, "isn't a host name"],
+    [{ hosts: ["*.com"] }, "too broad"],
+    [{ hosts: ["192.168.1.10"] }, "public host name"],
+    [{ hosts: ["homeassistant.local"] }, "public host name"],
+    [{ hosts: ["printer"] }, "public host name"],
+    [{ every: "30s" }, "at least 1m"],
+    [{ script: undefined }, '"script": "script.js"'],
+    [{ script: "../x.js" }, '"script": "script.js"'],
+    [{ scriptInline: "export default () => 1" }, "not scriptInline"],
+    [{ fetch: { url: "https://x.com" } }, "ctx.fetch"],
+    [{ pick: { title: "$.x" } }, "pick is for json"],
+    [{ card: { template: "{{title}}" } }, "card.template"],
+    [{ permissions: ["fs"] }, "permissions"],
+  ];
+  for (const [patch, msg] of cases) {
+    const m = { ...joke(), ...patch };
+    for (const k of Object.keys(patch)) if (patch[k] === undefined) delete m[k];
+    assert.throws(() => checkManifest(m), (e) => e.message.includes(msg), JSON.stringify(patch));
+  }
+  // The script-only fields aren't for other kinds.
+  assert.throws(() => checkManifest({ ...hn(), hosts: ["x.com"] }), /only for script plugins/);
+});
+
+test("script plugins: hosts", () => {
+  assert.equal(checkHost("API.Example.com."), "api.example.com");
+  assert.equal(checkHost("*.example.co.uk"), "*.example.co.uk");
+  for (const h of ["", "a..b", "-a.com", "a_b.com", "x.com/path", "localhost", "10.0.0.1"]) assert.throws(() => checkHost(h), undefined, h);
+});
+
+test("script plugins: the code", () => {
+  const ok = (src) => checkScript(Buffer.from(src));
+  ok("export default async function (ctx) { const r = await ctx.fetch('https://x.com/'); return (await r.json()).joke; }");
+  ok("// import x from 'y' in a comment\nexport default () => 'import(\"x\")';");
+  ok("const importance = 1; export default () => importance;");
+  assert.throws(() => ok("import x from 'y';\nexport default () => x;"), /can't import/);
+  assert.throws(() => ok("export default async () => (await import('y')).default;"), /can't import/);
+  assert.throws(() => ok("export default () => eval('1');"), /eval and Function/);
+  assert.throws(() => ok("export default () => new Function('return 1')();"), /eval and Function/);
+  assert.throws(() => ok("export function f() {}"), /default export/);
+  assert.throws(() => ok("export default function ( {"), /doesn't parse/);
+  assert.throws(() => checkScript(Buffer.alloc(64 * 1024 + 1, 32)), /64 KB/);
+  assert.throws(() => checkScript(Buffer.from([0x65, 0xff, 0xfe])), /./);
+  assert.equal(stripLiterals("a('x') /* c */ b // d\nc").replace(/\s+/g, " "), "a( 0 ) b c");
+});
+
+test("script plugins need Rattleboard 0.8.0", () => {
+  const meta = { name: "J", summary: "S", author: { name: "A" }, tags: ["fun"], version: "1.0.0", license: "MIT", needsSecrets: true, updated: "2026-10-19" };
+  const facts = checkManifest(joke());
+  assert.throws(() => checkMeta(meta, facts), /0\.8\.0/);
+  assert.throws(() => checkMeta({ ...meta, minAppVersion: "0.7.0" }, facts), /0\.8\.0/);
+  checkMeta({ ...meta, minAppVersion: "0.8.0" }, facts);
+  checkMeta({ ...meta, minAppVersion: "1.0.0" }, facts);
+});
+
+test("conformance vectors are well formed", () => {
+  const dir = new URL("../conformance/script/", import.meta.url);
+  const files = readdirSync(dir).filter((f) => f.endsWith(".json")).sort();
+  assert.ok(files.length >= 50);
+  const names = new Set();
+  for (const f of files) {
+    const v = JSON.parse(readFileSync(new URL(f, dir), "utf8"));
+    assert.match(f, /^\d{3}-[a-z0-9-]+\.json$/, f);
+    assert.equal(f.slice(4, -5), v.name, f);
+    assert.ok(!names.has(v.name), `two vectors called ${v.name}`);
+    names.add(v.name);
+    assert.equal(typeof v.script, "string", f);
+    for (const k of ["now", "local", "utcOffset", "board", "settings", "secrets", "store", "hosts"]) assert.ok(k in v.input, `${f}: input.${k}`);
+    assert.ok(("output" in v.expect) !== ("error" in v.expect), `${f}: expect.output or expect.error`);
+  }
 });
