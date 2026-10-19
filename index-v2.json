@@ -1,0 +1,451 @@
+{
+  "format": 1,
+  "generated": "2026-10-19T00:00:00Z",
+  "repo": "https://github.com/slastrina/rattleboard-plugins",
+  "plugins": [
+    {
+      "id": "community.bbc-world",
+      "name": "BBC World News",
+      "summary": "New world headlines from BBC News, one per card.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "news"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://www.bbc.co.uk/news/world",
+      "kind": "rss",
+      "needsSecrets": false,
+      "minAppVersion": null,
+      "settings": [],
+      "secrets": [],
+      "hosts": [
+        "feeds.bbci.co.uk"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.bbc-world/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.bbc-world/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.bbc-world/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.bbc-world",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.bitcoin-price",
+      "name": "Bitcoin price",
+      "summary": "The price of bitcoin in your currency and its 24-hour change, from CoinGecko.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "finance"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://www.coingecko.com",
+      "kind": "json",
+      "needsSecrets": false,
+      "minAppVersion": null,
+      "settings": [
+        {
+          "key": "currency",
+          "label": "Currency",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "api.coingecko.com"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.bitcoin-price/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.bitcoin-price/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.bitcoin-price/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.bitcoin-price",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.exchange-rate",
+      "name": "Exchange rate",
+      "summary": "The latest reference rate between two currencies (European Central Bank data via Frankfurter).",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "finance"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://frankfurter.dev",
+      "kind": "json",
+      "needsSecrets": false,
+      "minAppVersion": null,
+      "settings": [
+        {
+          "key": "from",
+          "label": "From",
+          "type": "select"
+        },
+        {
+          "key": "to",
+          "label": "To",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "api.frankfurter.dev"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.exchange-rate/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.exchange-rate/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.exchange-rate/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.exchange-rate",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.github-repo-stars",
+      "name": "GitHub stars",
+      "summary": "How many stars a public GitHub repository has.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "tech"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://github.com",
+      "kind": "json",
+      "needsSecrets": false,
+      "minAppVersion": null,
+      "settings": [
+        {
+          "key": "owner",
+          "label": "Owner (user or organisation)",
+          "type": "text"
+        },
+        {
+          "key": "repo",
+          "label": "Repository",
+          "type": "text"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "api.github.com"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.github-repo-stars/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.github-repo-stars/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.github-repo-stars/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.github-repo-stars",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.hacker-news",
+      "name": "Hacker News",
+      "summary": "New stories from the Hacker News front page, one per card.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "news",
+        "tech"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://news.ycombinator.com",
+      "kind": "rss",
+      "needsSecrets": false,
+      "minAppVersion": null,
+      "settings": [],
+      "secrets": [],
+      "hosts": [
+        "hnrss.org"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.hacker-news/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.hacker-news/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.hacker-news/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.hacker-news",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.iss-position",
+      "name": "ISS position",
+      "summary": "Where the International Space Station is right now: latitude and longitude.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "space"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://wheretheiss.at",
+      "kind": "json",
+      "needsSecrets": false,
+      "minAppVersion": null,
+      "settings": [],
+      "secrets": [],
+      "hosts": [
+        "api.wheretheiss.at"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.iss-position/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.iss-position/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.iss-position/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.iss-position",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.on-this-day",
+      "name": "On this day",
+      "summary": "A notable event from history that happened on today's date, from Wikipedia.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun",
+        "other"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://en.wikipedia.org/wiki/Wikipedia:Selected_anniversaries",
+      "kind": "json",
+      "needsSecrets": false,
+      "minAppVersion": null,
+      "settings": [],
+      "secrets": [],
+      "hosts": [
+        "api.wikimedia.org"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.on-this-day/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.on-this-day/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.on-this-day/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.on-this-day",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.planes-near-airport",
+      "name": "Planes near the airport",
+      "summary": "Aircraft climbing out of or coming in to an airport near you, live from adsb.lol. No key needed.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "transport",
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://adsb.lol",
+      "kind": "json",
+      "needsSecrets": false,
+      "minAppVersion": "0.7.0",
+      "settings": [
+        {
+          "key": "airport",
+          "label": "Airport name on the card",
+          "type": "text"
+        },
+        {
+          "key": "lat",
+          "label": "Latitude",
+          "type": "number"
+        },
+        {
+          "key": "lon",
+          "label": "Longitude",
+          "type": "number"
+        },
+        {
+          "key": "radius",
+          "label": "Radius (nautical miles, up to 250)",
+          "type": "number"
+        },
+        {
+          "key": "phase",
+          "label": "Show",
+          "type": "select"
+        },
+        {
+          "key": "ceiling",
+          "label": "Ignore aircraft above (feet; blank for no limit)",
+          "type": "text"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "api.adsb.lol"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.planes-near-airport/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.planes-near-airport/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.planes-near-airport/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.planes-near-airport",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.ptv-disruptions",
+      "name": "PTV disruptions",
+      "summary": "Current disruptions at your Melbourne station or stop, from PTV's Timetable API. Needs a free PTV key.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "transport"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://www.vic.gov.au/public-transport-timetable-api",
+      "kind": "json",
+      "needsSecrets": true,
+      "minAppVersion": "0.7.0",
+      "settings": [
+        {
+          "key": "devid",
+          "label": "PTV developer ID (devid)",
+          "type": "text"
+        },
+        {
+          "key": "stop",
+          "label": "Stop id (Flinders Street is 1071)",
+          "type": "text"
+        },
+        {
+          "key": "label",
+          "label": "Name on the card",
+          "type": "text"
+        }
+      ],
+      "secrets": [
+        {
+          "key": "key",
+          "label": "PTV API key"
+        }
+      ],
+      "hosts": [
+        "timetableapi.ptv.vic.gov.au"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-disruptions/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-disruptions/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-disruptions/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.ptv-disruptions",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.ptv-next-trains",
+      "name": "PTV next trains",
+      "summary": "The next departures from your Melbourne station or stop, from PTV's Timetable API. Needs a free PTV key.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "transport"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://www.vic.gov.au/public-transport-timetable-api",
+      "kind": "json",
+      "needsSecrets": true,
+      "minAppVersion": "0.7.0",
+      "settings": [
+        {
+          "key": "devid",
+          "label": "PTV developer ID (devid)",
+          "type": "text"
+        },
+        {
+          "key": "stop",
+          "label": "Stop id (Flinders Street is 1071)",
+          "type": "text"
+        },
+        {
+          "key": "label",
+          "label": "Name on the card",
+          "type": "text"
+        },
+        {
+          "key": "route_type",
+          "label": "Mode",
+          "type": "select"
+        },
+        {
+          "key": "route",
+          "label": "Only this route id (optional)",
+          "type": "text"
+        },
+        {
+          "key": "direction",
+          "label": "Only this direction id (optional)",
+          "type": "text"
+        }
+      ],
+      "secrets": [
+        {
+          "key": "key",
+          "label": "PTV API key"
+        }
+      ],
+      "hosts": [
+        "timetableapi.ptv.vic.gov.au"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-next-trains/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-next-trains/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-next-trains/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.ptv-next-trains",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.sunrise-sunset",
+      "name": "Sunrise and sunset",
+      "summary": "Today's sunrise and sunset times for any place, from sunrise-sunset.org.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "weather",
+        "home"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://sunrise-sunset.org",
+      "kind": "json",
+      "needsSecrets": false,
+      "minAppVersion": null,
+      "settings": [
+        {
+          "key": "lat",
+          "label": "Latitude",
+          "type": "number"
+        },
+        {
+          "key": "lng",
+          "label": "Longitude",
+          "type": "number"
+        },
+        {
+          "key": "tz",
+          "label": "Time zone (like Europe/London)",
+          "type": "text"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "api.sunrise-sunset.org"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.sunrise-sunset/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.sunrise-sunset/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.sunrise-sunset/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.sunrise-sunset",
+      "updated": "2026-10-19"
+    }
+  ]
+}

@@ -39,7 +39,7 @@ jobs:
           if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
             echo "No base to compare with: checking index.json anyway."
             npm run check-index
-          elif git diff --name-only "$BASE"...HEAD | grep -qx 'index.json'; then
+          elif git diff --name-only "$BASE"...HEAD | grep -qxE 'index(-v2)?\.json'; then
             npm run check-index
           else
             echo "index.json isn't part of this change; it's regenerated after merging to main."

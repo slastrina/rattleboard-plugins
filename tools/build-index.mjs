@@ -23,6 +23,9 @@ import { execFileSync } from "node:child_process";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const PLUGINS = join(ROOT, "plugins");
 const INDEX = join(ROOT, "index.json");
+// index-v2.json lists every plugin; index.json leaves out ones that need a newer app
+// (minAppVersion), because apps before 0.7.0 read index.json and ignore minAppVersion.
+const INDEX_V2 = join(ROOT, "index-v2.json");
 const REPO = "https://github.com/slastrina/rattleboard-plugins";
 const RAW = "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main";
 const TREE = `${REPO}/tree/main`;
@@ -679,7 +682,8 @@ export function buildIndex() {
   const plugins = results.filter((r) => r.entry).map((r) => r.entry).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   const newest = plugins.map((p) => p.updated).sort().at(-1) ?? "2026-10-19";
   const index = { format: 1, generated: `${newest}T00:00:00Z`, repo: REPO, plugins };
-  return { results, json: JSON.stringify(index, null, 2) + "\n" };
+  const legacy = { ...index, plugins: plugins.filter((p) => !p.minAppVersion) };
+  return { results, json: JSON.stringify(legacy, null, 2) + "\n", jsonV2: JSON.stringify(index, null, 2) + "\n" };
 }
 
 // ------------------------------------------------------------------ version bumps (pull requests)
@@ -733,7 +737,7 @@ function main() {
   const baseAt = args.indexOf("--base");
   const base = baseAt >= 0 ? args[baseAt + 1] : null;
 
-  const { results, json } = buildIndex();
+  const { results, json, jsonV2 } = buildIndex();
   let failed = false;
   for (const r of results) {
     if (r.errors.length) {
@@ -759,7 +763,8 @@ function main() {
   const count = results.length;
   if (check) {
     const current = existsSync(INDEX) ? readFileSync(INDEX, "utf8") : "";
-    if (current !== json) {
+    const currentV2 = existsSync(INDEX_V2) ? readFileSync(INDEX_V2, "utf8") : "";
+    if (current !== json || currentV2 !== jsonV2) {
       console.error("\n✗ index.json is out of date (or was edited by hand). Run `npm run build-index`, or leave index.json out of your change: it's regenerated when the change is merged.");
       process.exit(1);
     }
@@ -768,7 +773,8 @@ function main() {
     console.log(`\n${count} plugin(s) valid.`);
   } else {
     writeFileSync(INDEX, json);
-    console.log(`\n${count} plugin(s) valid; wrote index.json.`);
+    writeFileSync(INDEX_V2, jsonV2);
+    console.log(`\n${count} plugin(s) valid; wrote index.json and index-v2.json.`);
   }
 }
 

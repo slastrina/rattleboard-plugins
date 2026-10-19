@@ -446,6 +446,9 @@ gh pr create --fill                                  # or open the pull request 
 
 **Don't edit `index.json`.** It's rebuilt automatically after your plugin is merged. (If you do include it, it must be exactly what `npm run build-index` produces.)
 
+> **Two index files.** `index-v2.json` lists every plugin and is what Rattleboard 0.7 and later read. `index.json` leaves out plugins with a `minAppVersion`, so older apps never offer a plugin they can't run. Both are generated; don't edit either by hand.
+
+
 ### What happens next
 
 - The **Validate** check runs on your pull request within a minute or two. If it fails, open **Details** to see what's wrong (for example, `meta.json: needsSecrets must be true`), fix the file in your fork, and the check runs again by itself.
