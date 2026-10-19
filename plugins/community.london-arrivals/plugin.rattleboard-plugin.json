@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "id": "community.london-arrivals",
+  "name": "London arrivals",
+  "description": "The next Tube, bus, DLR or Overground arrivals at a TfL stop, coloured by how the lines are running (no key needed)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": ["api.tfl.gov.uk"],
+  "every": "1m",
+  "dwell": "30s",
+  "card": { "chip": "blue", "align": "left" },
+  "settings": [
+    { "key": "stop", "label": "TfL stop id (like 940GZZLUOXC for Oxford Circus)", "type": "text", "default": "940GZZLUOXC" },
+    { "key": "name", "label": "Name on the card (optional)", "type": "text", "default": "" },
+    { "key": "line", "label": "Only this line (optional, like victoria or 73)", "type": "text", "default": "" }
+  ]
+}

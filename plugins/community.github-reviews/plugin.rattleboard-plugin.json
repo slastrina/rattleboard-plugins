@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "id": "community.github-reviews",
+  "name": "GitHub reviews",
+  "description": "Pull requests waiting for your review, your own open ones, and unread notifications, with a colour that says if anything needs you",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": ["api.github.com"],
+  "every": "5m",
+  "dwell": "30s",
+  "card": { "chip": "green" },
+  "settings": [
+    { "key": "org", "label": "Only in this organisation or user (optional)", "type": "text", "default": "" }
+  ],
+  "secrets": [{ "key": "token", "label": "GitHub personal access token" }]
+}

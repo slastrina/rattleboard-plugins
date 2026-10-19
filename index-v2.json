@@ -32,6 +32,54 @@
       "updated": "2026-10-19"
     },
     {
+      "id": "community.big-countdown",
+      "name": "Big countdown",
+      "summary": "Days to go in big colour digits, with a bar that fills up as the day gets closer.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "calendar",
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": null,
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "title",
+          "label": "What it counts to",
+          "type": "text"
+        },
+        {
+          "key": "date",
+          "label": "Date",
+          "type": "date"
+        },
+        {
+          "key": "from",
+          "label": "Bar starts on (optional; otherwise the day you added it)",
+          "type": "date"
+        },
+        {
+          "key": "colour",
+          "label": "Colour",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.big-countdown/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.big-countdown/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.big-countdown/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.big-countdown",
+      "updated": "2026-10-19"
+    },
+    {
       "id": "community.bitcoin-price",
       "name": "Bitcoin price",
       "summary": "The price of bitcoin in your currency and its 24-hour change, from CoinGecko.",
@@ -63,6 +111,34 @@
       "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.bitcoin-price/README.md",
       "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.bitcoin-price/preview.json",
       "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.bitcoin-price",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.dad-joke",
+      "name": "Dad joke",
+      "summary": "A new dad joke every hour, never one it told recently.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://icanhazdadjoke.com",
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [],
+      "secrets": [],
+      "hosts": [
+        "icanhazdadjoke.com"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.dad-joke/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.dad-joke/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.dad-joke/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.dad-joke",
       "updated": "2026-10-19"
     },
     {
@@ -144,6 +220,45 @@
       "updated": "2026-10-19"
     },
     {
+      "id": "community.github-reviews",
+      "name": "GitHub reviews",
+      "summary": "Pull requests waiting for your review, your open ones and unread notifications, in colour.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "tech"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://github.com/settings/tokens",
+      "kind": "script",
+      "needsSecrets": true,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "org",
+          "label": "Only in this organisation or user (optional)",
+          "type": "text"
+        }
+      ],
+      "secrets": [
+        {
+          "key": "token",
+          "label": "GitHub personal access token"
+        }
+      ],
+      "hosts": [
+        "api.github.com"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.github-reviews/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.github-reviews/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.github-reviews/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.github-reviews",
+      "updated": "2026-10-19"
+    },
+    {
       "id": "community.hacker-news",
       "name": "Hacker News",
       "summary": "New stories from the Hacker News front page, one per card.",
@@ -198,6 +313,90 @@
       "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.iss-position/README.md",
       "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.iss-position/preview.json",
       "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.iss-position",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.london-arrivals",
+      "name": "London arrivals",
+      "summary": "Next Tube, bus, DLR or Overground arrivals at a TfL stop, coloured by line status.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "transport"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://api-portal.tfl.gov.uk",
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "stop",
+          "label": "TfL stop id (like 940GZZLUOXC for Oxford Circus)",
+          "type": "text"
+        },
+        {
+          "key": "name",
+          "label": "Name on the card (optional)",
+          "type": "text"
+        },
+        {
+          "key": "line",
+          "label": "Only this line (optional, like victoria or 73)",
+          "type": "text"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "api.tfl.gov.uk"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.london-arrivals/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.london-arrivals/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.london-arrivals/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.london-arrivals",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.next-public-holiday",
+      "name": "Next public holiday",
+      "summary": "The next public holiday in your country or state, and how many days to go.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "calendar",
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://date.nager.at",
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "country",
+          "label": "Country",
+          "type": "select"
+        },
+        {
+          "key": "region",
+          "label": "State or region (optional, like AU-VIC or US-CA)",
+          "type": "text"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "date.nager.at"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.next-public-holiday/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.next-public-holiday/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.next-public-holiday/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.next-public-holiday",
       "updated": "2026-10-19"
     },
     {
@@ -400,6 +599,49 @@
       "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-next-trains/README.md",
       "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.ptv-next-trains/preview.json",
       "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.ptv-next-trains",
+      "updated": "2026-10-19"
+    },
+    {
+      "id": "community.sun-and-moon",
+      "name": "Sun and moon",
+      "summary": "Today's sunrise and sunset and the moon's phase, worked out on your device.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "space",
+        "weather"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": null,
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "latitude",
+          "label": "Latitude (south is negative)",
+          "type": "number"
+        },
+        {
+          "key": "longitude",
+          "label": "Longitude (west is negative)",
+          "type": "number"
+        },
+        {
+          "key": "clock",
+          "label": "Times",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.sun-and-moon/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.sun-and-moon/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.sun-and-moon/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.sun-and-moon",
       "updated": "2026-10-19"
     },
     {

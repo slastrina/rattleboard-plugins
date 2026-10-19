@@ -1,0 +1,12 @@
+{
+  "name": "GitHub reviews",
+  "summary": "Pull requests waiting for your review, your open ones and unread notifications, in colour.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["tech"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://github.com/settings/tokens",
+  "needsSecrets": true,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-19"
+}

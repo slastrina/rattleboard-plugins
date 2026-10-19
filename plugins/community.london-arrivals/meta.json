@@ -1,0 +1,12 @@
+{
+  "name": "London arrivals",
+  "summary": "Next Tube, bus, DLR or Overground arrivals at a TfL stop, coloured by line status.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["transport"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://api-portal.tfl.gov.uk",
+  "needsSecrets": false,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-19"
+}

@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "id": "community.big-countdown",
+  "name": "Big countdown",
+  "description": "Days to go in big digits, with a colour bar that fills up as the day gets closer (worked out on your device)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": [],
+  "every": "1m",
+  "dwell": "30s",
+  "settings": [
+    { "key": "title", "label": "What it counts to", "type": "text", "default": "Christmas" },
+    { "key": "date", "label": "Date", "type": "date", "default": "2026-12-25" },
+    { "key": "from", "label": "Bar starts on (optional; otherwise the day you added it)", "type": "date", "default": "" },
+    {
+      "key": "colour",
+      "label": "Colour",
+      "type": "select",
+      "default": "rainbow",
+      "options": [
+        { "value": "rainbow", "label": "Rainbow" },
+        { "value": "red", "label": "Red" },
+        { "value": "orange", "label": "Orange" },
+        { "value": "yellow", "label": "Yellow" },
+        { "value": "green", "label": "Green" },
+        { "value": "blue", "label": "Blue" },
+        { "value": "violet", "label": "Violet" },
+        { "value": "white", "label": "White" }
+      ]
+    }
+  ]
+}

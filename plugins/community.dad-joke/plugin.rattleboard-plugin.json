@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "id": "community.dad-joke",
+  "name": "Dad joke",
+  "description": "A new dad joke every so often, never the same one twice in a row (icanhazdadjoke.com, no key needed)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": ["icanhazdadjoke.com"],
+  "every": "1h",
+  "dwell": "45s",
+  "card": { "chip": "orange", "pages": 3 }
+}

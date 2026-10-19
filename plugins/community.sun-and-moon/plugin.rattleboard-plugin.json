@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "id": "community.sun-and-moon",
+  "name": "Sun and moon",
+  "description": "Today's sunrise and sunset, and the moon's phase, worked out on your device (no network at all)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": [],
+  "every": "5m",
+  "dwell": "30s",
+  "card": { "chip": "yellow" },
+  "settings": [
+    { "key": "latitude", "label": "Latitude (south is negative)", "type": "number", "default": -37.81 },
+    { "key": "longitude", "label": "Longitude (west is negative)", "type": "number", "default": 144.96 },
+    { "key": "clock", "label": "Times", "type": "select", "default": "12", "options": [{ "value": "12", "label": "12-hour (6:12 AM)" }, { "value": "24", "label": "24-hour (06:12)" }] }
+  ]
+}

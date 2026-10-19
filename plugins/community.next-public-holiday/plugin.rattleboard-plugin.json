@@ -1,0 +1,35 @@
+{
+  "format": 1,
+  "id": "community.next-public-holiday",
+  "name": "Next public holiday",
+  "description": "The next public holiday where you live, and how many days to go (no key needed)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": ["date.nager.at"],
+  "every": "6h",
+  "dwell": "30s",
+  "card": { "chip": "green" },
+  "settings": [
+    {
+      "key": "country",
+      "label": "Country",
+      "type": "select",
+      "default": "AU",
+      "options": [
+        { "value": "AU", "label": "Australia" },
+        { "value": "CA", "label": "Canada" },
+        { "value": "DE", "label": "Germany" },
+        { "value": "FR", "label": "France" },
+        { "value": "GB", "label": "United Kingdom" },
+        { "value": "IE", "label": "Ireland" },
+        { "value": "IT", "label": "Italy" },
+        { "value": "JP", "label": "Japan" },
+        { "value": "NL", "label": "Netherlands" },
+        { "value": "NZ", "label": "New Zealand" },
+        { "value": "ES", "label": "Spain" },
+        { "value": "US", "label": "United States" }
+      ]
+    },
+    { "key": "region", "label": "State or region (optional, like AU-VIC or US-CA)", "type": "text", "default": "" }
+  ]
+}

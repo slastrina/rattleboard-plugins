@@ -13,6 +13,7 @@ This guide walks you through writing a plugin, testing it on your own board, and
    - [Placeholders](#placeholders)
    - [How the card is laid out](#how-the-card-is-laid-out)
    - [Plugins that need a key](#plugins-that-need-a-key)
+   - [Script plugins (0.8.0 and later)](#script-plugins-080-and-later)
 3. [Test it on your board](#3-test-it-on-your-board)
 4. [Add the other files](#4-add-the-other-files)
 5. [Send it in](#5-send-it-in)
@@ -25,8 +26,9 @@ This guide walks you through writing a plugin, testing it on your own board, and
 
 Every plugin here is checked against these before it's merged. Most are checked automatically.
 
-- **No command plugins.** `kind` is `rss`, `json`, `ical` or `text`. Command plugins run programs on the user's computer; they can be shared as files, but not here, and Rattleboard refuses them from links.
-- **HTTPS only.** `fetch.url` starts with `https://`, written out in full (not built from a setting). Plain `http://` to a home server works in the app, but not in a shared plugin.
+- **No command plugins.** `kind` is `rss`, `json`, `ical`, `text` or `script`. Command plugins run programs on the user's computer; they can be shared as files, but not here, and Rattleboard refuses them from links.
+- **HTTPS only.** `fetch.url` starts with `https://`, written out in full (not built from a setting). Plain `http://` to a home server works in the app, but not in a shared plugin. A script plugin's `hosts` are public host names, and it fetches over `https://`.
+- **Script plugins are readable.** A script is reviewed line by line: plain, commented JavaScript, no minified or obfuscated code, nothing copied in that you can't explain, and no more than it needs.
 - **No keys, tokens or personal details in any file.** If the service needs a key, declare it under `secrets` and the user enters their own (see [Plugins that need a key](#plugins-that-need-a-key)). Don't put your own address, location, calendar link or account name in a default either, unless it's an obvious example.
 - **Respect the service.** Use only feeds and APIs whose terms allow this kind of use, keep within their rate limits, and set `every` no faster than the data really changes: news every 15 minutes, prices every 15 minutes or more, daily things every few hours. Remember that every user's board fetches on its own schedule. If a service asks for attribution, say so in the plugin's README.
 - **The folder name is the plugin's id.** Lower-case letters, digits, dots and dashes, reverse-DNS style: `community.my-plugin`, or `io.github.yourname.my-plugin`. `rattleboard.` is reserved.
@@ -44,7 +46,7 @@ A plugin is one JSON file named `plugin.rattleboard-plugin.json`. Any text edito
 "$schema": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/schema/plugin.schema.json",
 ```
 
-There are four kinds of plugin:
+There are five kinds of plugin:
 
 | `kind` | What it does |
 | --- | --- |
@@ -52,6 +54,7 @@ There are four kinds of plugin:
 | `json` | Reads a JSON API. Either one value shown as it is now (a price, a position), or a list of items shown once each, like a feed. |
 | `ical` | Reads an iCal calendar and shows the next event, with an alert 10 minutes before it starts. |
 | `text` | Fetches nothing: its card is made from its template, for example the day of the week. |
+| `script` | A small JavaScript file that makes the card: combine requests, compute things, draw any layout. Rattleboard 0.8.0 and later; see [Script plugins](#script-plugins-080-and-later). |
 
 ### Example 1: an RSS feed
 
@@ -327,6 +330,111 @@ After the URL's placeholders are filled in, Rattleboard computes the HMAC (`hmac
 
 If your plugin uses anything marked 0.7.0 above, add `"minAppVersion": "0.7.0"` to `meta.json`. Older versions of Rattleboard then list it as "Needs Rattleboard 0.7.0 or later" and don't offer to install it (they'd ignore the new fields and show the wrong thing).
 
+### Script plugins (0.8.0 and later)
+
+When a feed or a JSON API and a template aren't enough (you need two requests, some arithmetic, a colour that depends on the data, or a layout drawn tile by tile), write a **script plugin**: a small JavaScript module that Rattleboard runs in a sandbox. It runs the same on the desktop, Rattleboard Web, Android and the Apple apps.
+
+#### The files
+
+```
+plugins/community.dad-joke/
+  plugin.rattleboard-plugin.json    the manifest, with "kind": "script"
+  script.js                         the code
+  meta.json, README.md, preview.json
+```
+
+```json
+{
+  "format": 1,
+  "id": "community.dad-joke",
+  "name": "Dad joke",
+  "description": "A new dad joke every so often (icanhazdadjoke.com, no key needed)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": ["icanhazdadjoke.com"],
+  "every": "1h",
+  "dwell": "45s",
+  "card": { "chip": "orange", "pages": 3 }
+}
+```
+
+```js
+export default async function (ctx) {
+  const r = await ctx.fetch("https://icanhazdadjoke.com/", { headers: { Accept: "application/json" } });
+  if (!r.ok) throw new Error(`icanhazdadjoke.com answered HTTP ${r.status}`);
+  const joke = await r.json();
+  return { text: joke.joke, id: joke.id };
+}
+```
+
+- `script`: the file next to the manifest (`script.js`). When the app installs the plugin, it fetches that file from the same folder and keeps the code with the manifest. (A plugin shared as one file outside this repository can carry its code in `"scriptInline"` instead; here the code is always its own file, so it can be reviewed.)
+- `hosts` (**required**): every host the script may fetch from, like `"api.example.com"`, or `"*.example.com"` for any subdomain. The app shows them before installing, and any other address is refused. A script that fetches nothing has `"hosts": []`.
+- `every`: how often it runs, at least `1m` (or `10s` with no hosts); default `15m` (`1m` with no hosts).
+- `settings`, `secrets`, `card.chip`, `card.align`, `card.pages`, `dwell`, `schedule`, `priority`, `alertWhen` and `maxItems` work as for other kinds. A script lays out its own card, so there's no `card.template`, `fetch` or `pick`.
+- `permissions` is reserved for the future: leave it out.
+- `meta.json` needs `"minAppVersion": "0.8.0"` (or later).
+
+#### What a script gets: `ctx`
+
+The script's default export is a function (it may be `async`) that gets one argument, `ctx`:
+
+| | |
+| --- | --- |
+| `ctx.settings` | The source's settings, by key (read-only) |
+| `ctx.board` | `{ rows, cols }`: the board's size, like `{ rows: 6, cols: 22 }` |
+| `ctx.now` | The time, in milliseconds since 1970. `Date.now()` and `new Date()` give the same time; it doesn't move during a run. |
+| `ctx.local`, `ctx.utcOffset` | The board's local time as `"2026-10-19T09:41:00"`, and its offset from UTC in minutes (660 for Melbourne in summer). Use these rather than `Date`'s local methods, which may be in another time zone. |
+| `ctx.name` | The source's name |
+| `ctx.fetch(url, { method, headers, body })` | Fetches from one of `hosts`. Answers `{ status, ok, url, headers, text(), json() }` (header names in lower case). An HTTP error like 404 is an answer (`ok` is false), not an error. At most 5 per run, 2 MB each, 10 s each. `body` is a string, or an object sent as JSON. Fails with a `FetchError` whose `code` says why: `host_not_allowed`, `insecure`, `bad_url`, `bad_request`, `too_many_fetches`, `secret_missing`, `unknown_secret`, `timeout`, `too_large`, `network` or `redirect_not_allowed`. |
+| `ctx.secret("token")` | A stand-in for one of the plugin's `secrets`. Put it in a fetch's URL or headers, as it is or in a string (`` `Bearer ${ctx.secret("token")}` ``): Rattleboard fills in the real value as the request goes out. The script itself never sees the value (as text, the stand-in reads `{{secret.token}}`), and an answer that echoes it back has it replaced by `[secret]`. |
+| `ctx.hasSecret("token")` | Whether the user has entered that secret |
+| `ctx.hmac(algo, key, data)` | An HMAC in lower-case hex: `algo` is `sha1`, `sha256` or `sha512`; `key` is text or `ctx.secret("key")`. For APIs that want signed requests. |
+| `ctx.store` | A little memory between runs, per source: `get(key)`, `set(key, value)` (any JSON), `delete(key)`, `keys()`. 16 KB in all. It's kept only when a run succeeds. |
+| `ctx.log(...)`, `console.log(...)` | Lines for the source's log in Settings (the last run's first 50 lines) |
+
+#### What a script returns
+
+| Return | Shows |
+| --- | --- |
+| `"text"` | The text laid out like a template: word-wrapped and centred, `\n` for a new line, colour codes like `{g}` or `{63}`, and `{0}` for a blank tile that's never squeezed out (for lining up columns) |
+| `{ text }`, `{ characters }` or `{ pages }` | A card: `characters` is exact tiles, rows of codes (0–71), centred on the board; `pages` is 1 to 6 pages, each text or `{ characters }`. With any of these: `color` (the corner chip: a colour name, or `"none"`), `align` (`"center"` or `"left"`), `link` (an `https://` address opened by clicking the board), `priority` (`"alert"` interrupts the board once per `id`), `id`, and `dwell` (`30` or `"30s"`) |
+| `{ items: [{ id, title, body, time, link }] }` | A list, newest first, shown like a feed: each new item once, a burst as a digest, with the source's filters and alert words. `time` is milliseconds or ISO 8601. Up to 50. |
+| `null` | Nothing to show this time |
+
+Anything else (or a result that isn't JSON data) is an error. Errors appear in the source's settings and its preview, as a feed's errors do; the card it showed before stays up.
+
+#### Limits
+
+| | |
+| --- | --- |
+| Code | 64 KB, one ES module. No `import`, `eval` or `new Function`. |
+| Time | 250 ms of JavaScript per run (waiting for fetches doesn't count), and 15 s in all |
+| Memory | 16 MB |
+| Network | `ctx.fetch` only: up to 5 requests to the `hosts`, 2 MB each, no cookies |
+| Not there | Timers (`setTimeout`), files, the environment, other plugins' data. Each run starts fresh: only `ctx.store` carries over. |
+
+#### Testing a script plugin
+
+- **In the app** (0.8.0 or later): choose **Import…** in **Settings → Sources** and pick both `plugin.rattleboard-plugin.json` and `script.js` (or drop both on the window). Rattleboard shows the hosts it can reach and asks before installing. Add it as a source: its settings show **Can reach**, **Last run** (when, how long, and any error) and **Show its log**. **Refresh preview** runs it again.
+- **From the desktop repository**: `plugin_card` runs it through the real engine at Standard, Compact and Large sizes, and prints its log and timing:
+
+  ```sh
+  cargo run -p rattleboard-core --example plugin_card -- ../rattleboard-plugins/plugins/community.my-plugin/plugin.rattleboard-plugin.json \
+      --settings '{"country": "AU"}' --preview ../rattleboard-plugins/plugins/community.my-plugin/preview.json
+  ```
+
+  For a plugin that needs a key you don't have, give canned answers with `--mock answers.json` (a list like `[{"method": "GET", "url": "https://api.example.com/x", "response": {"status": 200, "body": "{...}"}}]`) and any key with `--secret token=test`.
+- `npm run validate` checks the manifest and that `script.js` parses, has a default export and imports nothing.
+
+#### Examples in this repository
+
+- [Next public holiday](plugins/community.next-public-holiday/script.js): one request, a filter, and a colour by how soon.
+- [Sun and moon](plugins/community.sun-and-moon/script.js): no network at all; astronomy worked out on the device.
+- [Dad joke](plugins/community.dad-joke/script.js): `ctx.store` remembers recent jokes so they don't repeat.
+- [GitHub reviews](plugins/community.github-reviews/script.js): a secret token in a header, three requests at once.
+- [London arrivals](plugins/community.london-arrivals/script.js): two requests, the second built from the first's answer.
+- [Big countdown](plugins/community.big-countdown/script.js): a layout drawn tile by tile with `characters`.
+
 ## 3. Test it on your board
 
 Before you send a plugin in, make sure it really works. You need the Rattleboard desktop app (or Rattleboard Web).
@@ -381,6 +489,7 @@ plugins/community.my-plugin/
   meta.json                         directory details (required)
   README.md                         a longer description, shown in the app (recommended)
   preview.json                      the sample card (required for new plugins)
+  script.js                         a script plugin's code (script plugins only)
 ```
 
 No other files go in the folder.

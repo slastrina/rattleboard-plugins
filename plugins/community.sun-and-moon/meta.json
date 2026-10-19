@@ -1,0 +1,11 @@
+{
+  "name": "Sun and moon",
+  "summary": "Today's sunrise and sunset and the moon's phase, worked out on your device.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["space", "weather"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "needsSecrets": false,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-19"
+}

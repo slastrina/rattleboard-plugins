@@ -2,7 +2,7 @@
 
 Plugins for [Rattleboard](https://github.com/slastrina/rattleboard), the split-flap message board for your desktop, phone, tablet and TV, shared by the people who use it.
 
-A plugin is one small JSON file that adds a **source** to your board's rotation: a news feed, a JSON API, a calendar or a text card. Plugins here need no code, and they only ever fetch from the `https://` addresses they list.
+A plugin is one small JSON file that adds a **source** to your board's rotation: a news feed, a JSON API, a calendar or a text card. Most need no code. **Script plugins** (Rattleboard 0.8.0 and later) add a small, reviewed JavaScript file that runs in a sandbox, for cards that combine requests, work things out or draw their own layout. Every plugin only ever fetches from the `https://` addresses it lists.
 
 **Want to make one?** Read the step-by-step guide in **[CONTRIBUTING.md](CONTRIBUTING.md)**. It takes you from an empty file to a merged pull request, even if you've never opened one before.
 
@@ -21,6 +21,12 @@ A plugin is one small JSON file that adds a **source** to your board's rotation:
 | [Planes near the airport](plugins/community.planes-near-airport) | Aircraft departing or arriving nearby (adsb.lol) | No |
 | [PTV next trains](plugins/community.ptv-next-trains) | The next departures from a Victorian stop | Yes (free, from PTV) |
 | [PTV disruptions](plugins/community.ptv-disruptions) | Current disruptions at a Victorian stop | Yes (free, from PTV) |
+| [Next public holiday](plugins/community.next-public-holiday) | The next holiday in your country or state, and days to go (script) | No |
+| [Sun and moon](plugins/community.sun-and-moon) | Sunrise, sunset and the moon's phase, worked out on your device (script) | No |
+| [Dad joke](plugins/community.dad-joke) | A new dad joke every hour (script) | No |
+| [GitHub reviews](plugins/community.github-reviews) | PRs waiting for your review, yours, and unread notifications (script) | Yes (a GitHub token) |
+| [London arrivals](plugins/community.london-arrivals) | Next arrivals at a TfL stop, coloured by line status (script) | No |
+| [Big countdown](plugins/community.big-countdown) | Days to go in big colour digits with a filling bar (script) | No |
 
 The full list, with authors, versions and the hosts each plugin contacts, is [`index.json`](index.json).
 
@@ -34,7 +40,7 @@ The full list, with authors, versions and the hosts each plugin contacts, is [`i
 rattleboard://plugin?url=https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.hacker-news/plugin.rattleboard-plugin.json
 ```
 
-**From a file.** Download a plugin's `plugin.rattleboard-plugin.json` and drop it on **Settings → Sources** in the desktop app, or choose it with **Import…**.
+**From a file.** Download a plugin's `plugin.rattleboard-plugin.json` (and, for a script plugin, its `script.js`) and drop it on **Settings → Sources** in the desktop app, or choose it with **Import…**.
 
 Whichever way you choose, Rattleboard shows you the plugin and asks before installing it. Then add it to the rotation and fill in its settings. If it needs a key, enter it in the source's settings: keys are kept in your device's credential store, never in the plugin file.
 
@@ -46,8 +52,10 @@ plugins/<id>/                       one folder per plugin; the folder name is th
   meta.json                         directory details: name, summary, author, tags, version, license
   README.md                         a longer description, shown in the app
   preview.json                      a sample card, shown in the app before you install
+  script.js                         a script plugin's code (script plugins only)
 index.json                          the directory the apps read (generated: never edit it by hand)
 schema/                             JSON Schemas for the manifest and meta.json, for your editor
+conformance/                        test vectors every Rattleboard engine runs script plugins against
 tools/build-index.mjs               checks every plugin and writes index.json
 tools/make-preview.mjs              saves preview.json from a card on your own board
 .github/                            the checks that run on every pull request, and the templates

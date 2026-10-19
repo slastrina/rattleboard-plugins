@@ -1,0 +1,12 @@
+{
+  "name": "Next public holiday",
+  "summary": "The next public holiday in your country or state, and how many days to go.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["calendar", "fun"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://date.nager.at",
+  "needsSecrets": false,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-19"
+}
