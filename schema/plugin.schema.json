@@ -254,6 +254,10 @@
           ],
           "default": "feed",
           "description": "Format 1.1: status shows the list as one card ({{rows}}) instead of a feed of new items"
+        },
+        "link": {
+          "$ref": "#/$defs/path",
+          "description": "Format 1.1: the item's web address (http or https), opened by clicking the board"
         }
       }
     },

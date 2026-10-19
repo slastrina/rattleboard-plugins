@@ -290,6 +290,7 @@ For a JSON list (`pick.items`), these optional fields choose which items are use
   - `value` can use settings: `"{{settings.direction}}"`. If that comes out blank, the condition is switched off, so a blank setting means "everything".
   - `when` makes a condition apply only while a setting has one of the given values: `{"setting": "phase", "is": ["departures"]}`. That's how one plugin can offer "climbing / descending / all".
 - **`sort`**: by one `path`, `"order": "asc"` (default) or `"desc"`. `"numeric": true` sorts as numbers, `false` as text; leave it out to sort as numbers when every value is one. Items without the value always go last, and ties keep the API's order.
+- **`link`** (0.7.0+, also without a list): the path to an item's web address, like `"$.url"`. Clicking the board while the card shows opens it in the user's browser. Only `http://` and `https://` addresses are kept; anything else is ignored. RSS and Atom items (their `<link>`) and calendar events (their `URL`) get a link automatically, so they need nothing.
 - **`as`**: `"feed"` (the default) shows each new item once, like RSS. `"status"` shows the list as it is now, as one card: the template's `{{title}}`, `{{field.…}}` and so on are the first item, `{{rows}}` is `card.row` (default `{{title}}`) for every item, one per line, and `{{count}}` is how many there are. When no item is left, `card.empty` is shown (or nothing, without one). A status card is redrawn while it's on the board as its data or `|mins` change, at most once a minute.
 
 ```json

@@ -150,6 +150,9 @@ test("format 1.1: the desktop's refusals are refused here too", () => {
   for (const [pick, card, msg] of cases) assert.throws(() => checkManifest(list(pick, card), "community.list"), (e) => e.message.includes(msg), `${JSON.stringify(pick)} ${JSON.stringify(card)}`);
   const rss = { format: 1, id: "community.r", name: "R", kind: "rss", fetch: { url: "https://example.com/f" }, pick: { fields: { a: "$.a" } } };
   assert.throws(() => checkManifest(rss, "community.r"), /json plugins/);
+  checkManifest(list({ items: "$.hits[*]", title: "$.title", link: "$.url" }), "community.list");
+  assert.throws(() => checkManifest(list({ items: "$.hits[*]", title: "$.title", link: "$[bad" }), "community.list"), /pick.link/);
+  assert.throws(() => checkManifest({ ...rss, pick: { link: "$.url" } }, "community.r"), /json plugins/);
   for (const ok of ["{{a|upper|lower|trim|num|mins}}", "{{a|round}}{{a|round:2}}{{a|default:-}}{{a|pad:-3}}{{a|time}}{{a|time:h:mm tt}}", "{{now-2h:epoch}}"]) checkFilters(ok, "t");
 });
 

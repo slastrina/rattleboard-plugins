@@ -295,7 +295,7 @@ export function checkManifest(m, folder) {
   if (!absent(pick)) {
     if (!isObj(pick)) err("pick must be an object");
     else
-      for (const k of ["items", "id", "title", "body", "time"]) {
+      for (const k of ["items", "id", "title", "body", "time", "link"]) {
         const v = pick[k];
         if (absent(v)) continue;
         if (!isStr(v)) {
@@ -329,8 +329,8 @@ export function checkManifest(m, folder) {
       });
   };
   if (isObj(pick)) {
-    const extra = ["fields", "where", "sort", "as"].filter((k) => !absent(pick[k]));
-    if (extra.length && kind !== "json") err("pick.fields, pick.where, pick.sort and pick.as are for json plugins");
+    const extra = ["fields", "where", "sort", "as", "link"].filter((k) => !absent(pick[k]));
+    if (extra.length && kind !== "json") err("pick.fields, pick.where, pick.sort, pick.as and pick.link are for json plugins");
     if (!absent(pick.fields)) {
       if (!isObj(pick.fields) || Object.keys(pick.fields).length > 20) err("pick.fields must be an object of at most 20 names and paths");
       else
