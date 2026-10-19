@@ -1,0 +1,16 @@
+{
+  "name": "Exchange rate",
+  "summary": "The latest reference rate between two currencies (European Central Bank data via Frankfurter).",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "finance"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://frankfurter.dev",
+  "needsSecrets": false,
+  "updated": "2026-10-19"
+}

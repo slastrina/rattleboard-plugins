@@ -1,0 +1,98 @@
+{
+  "format": 1,
+  "id": "community.exchange-rate",
+  "name": "Exchange rate",
+  "description": "The latest reference exchange rate between two currencies, from Frankfurter (European Central Bank data, no key needed)",
+  "kind": "json",
+  "fetch": {
+    "url": "https://api.frankfurter.dev/v1/latest?from={{settings.from}}&to={{settings.to}}",
+    "every": "1h"
+  },
+  "pick": {
+    "title": "$.rates.{{settings.to}}",
+    "body": "$.date"
+  },
+  "card": {
+    "template": "{{settings.from}} TO {{settings.to}}\n{{title}}\nECB {{body}}",
+    "chip": "green"
+  },
+  "dwell": "30s",
+  "settings": [
+    {
+      "key": "from",
+      "label": "From",
+      "type": "select",
+      "default": "USD",
+      "options": [
+        "AUD",
+        "BRL",
+        "CAD",
+        "CHF",
+        "CNY",
+        "CZK",
+        "DKK",
+        "EUR",
+        "GBP",
+        "HKD",
+        "HUF",
+        "IDR",
+        "ILS",
+        "INR",
+        "ISK",
+        "JPY",
+        "KRW",
+        "MXN",
+        "MYR",
+        "NOK",
+        "NZD",
+        "PHP",
+        "PLN",
+        "RON",
+        "SEK",
+        "SGD",
+        "THB",
+        "TRY",
+        "USD",
+        "ZAR"
+      ]
+    },
+    {
+      "key": "to",
+      "label": "To",
+      "type": "select",
+      "default": "EUR",
+      "options": [
+        "AUD",
+        "BRL",
+        "CAD",
+        "CHF",
+        "CNY",
+        "CZK",
+        "DKK",
+        "EUR",
+        "GBP",
+        "HKD",
+        "HUF",
+        "IDR",
+        "ILS",
+        "INR",
+        "ISK",
+        "JPY",
+        "KRW",
+        "MXN",
+        "MYR",
+        "NOK",
+        "NZD",
+        "PHP",
+        "PLN",
+        "RON",
+        "SEK",
+        "SGD",
+        "THB",
+        "TRY",
+        "USD",
+        "ZAR"
+      ]
+    }
+  ]
+}

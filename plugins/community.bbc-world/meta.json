@@ -1,0 +1,16 @@
+{
+  "name": "BBC World News",
+  "summary": "New world headlines from BBC News, one per card.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "news"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://www.bbc.co.uk/news/world",
+  "needsSecrets": false,
+  "updated": "2026-10-19"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Hacker News",
+  "summary": "New stories from the Hacker News front page, one per card.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "news",
+    "tech"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://news.ycombinator.com",
+  "needsSecrets": false,
+  "updated": "2026-10-19"
+}

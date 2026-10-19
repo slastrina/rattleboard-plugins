@@ -1,0 +1,16 @@
+{
+  "name": "ISS position",
+  "summary": "Where the International Space Station is right now: latitude and longitude.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "space"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://wheretheiss.at",
+  "needsSecrets": false,
+  "updated": "2026-10-19"
+}

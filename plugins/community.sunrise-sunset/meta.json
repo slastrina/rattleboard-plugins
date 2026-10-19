@@ -1,0 +1,17 @@
+{
+  "name": "Sunrise and sunset",
+  "summary": "Today's sunrise and sunset times for any place, from sunrise-sunset.org.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "weather",
+    "home"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://sunrise-sunset.org",
+  "needsSecrets": false,
+  "updated": "2026-10-19"
+}

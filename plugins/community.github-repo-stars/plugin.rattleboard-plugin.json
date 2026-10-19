@@ -1,0 +1,37 @@
+{
+  "format": 1,
+  "id": "community.github-repo-stars",
+  "name": "GitHub stars",
+  "description": "How many stars a public GitHub repository has, from the GitHub API (no key needed)",
+  "kind": "json",
+  "fetch": {
+    "url": "https://api.github.com/repos/{{settings.owner}}/{{settings.repo}}",
+    "every": "1h",
+    "headers": {
+      "Accept": "application/vnd.github+json"
+    }
+  },
+  "pick": {
+    "title": "$.name",
+    "body": "$.stargazers_count"
+  },
+  "card": {
+    "template": "{{title}}\nSTARS {{body}}",
+    "chip": "yellow"
+  },
+  "dwell": "30s",
+  "settings": [
+    {
+      "key": "owner",
+      "label": "Owner (user or organisation)",
+      "type": "text",
+      "default": "slastrina"
+    },
+    {
+      "key": "repo",
+      "label": "Repository",
+      "type": "text",
+      "default": "rattleboard"
+    }
+  ]
+}

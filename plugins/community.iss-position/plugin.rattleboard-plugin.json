@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "id": "community.iss-position",
+  "name": "ISS position",
+  "description": "Where the International Space Station is right now, from wheretheiss.at (no key needed)",
+  "kind": "json",
+  "fetch": {
+    "url": "https://api.wheretheiss.at/v1/satellites/25544",
+    "every": "2m"
+  },
+  "pick": {
+    "title": "$.latitude",
+    "body": "$.longitude"
+  },
+  "card": {
+    "template": "ISS NOW\nLAT {{title}}\nLON {{body}}\n{{now:h:mm tt}}",
+    "chip": "blue"
+  },
+  "dwell": "30s"
+}

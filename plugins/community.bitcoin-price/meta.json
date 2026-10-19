@@ -1,0 +1,16 @@
+{
+  "name": "Bitcoin price",
+  "summary": "The price of bitcoin in your currency and its 24-hour change, from CoinGecko.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "finance"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://www.coingecko.com",
+  "needsSecrets": false,
+  "updated": "2026-10-19"
+}

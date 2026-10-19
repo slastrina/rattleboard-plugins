@@ -1,0 +1,66 @@
+{
+  "format": 1,
+  "id": "community.bitcoin-price",
+  "name": "Bitcoin price",
+  "description": "The price of bitcoin and its 24-hour change, from CoinGecko's public API (no key needed)",
+  "kind": "json",
+  "fetch": {
+    "url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies={{settings.currency}}&include_24hr_change=true",
+    "every": "15m"
+  },
+  "pick": {
+    "title": "$.bitcoin.{{settings.currency}}",
+    "body": "$.bitcoin.{{settings.currency}}_24h_change"
+  },
+  "card": {
+    "template": "BITCOIN\n{{title}} {{settings.currency}}\n24H {{body}}%",
+    "chip": "orange"
+  },
+  "dwell": "30s",
+  "settings": [
+    {
+      "key": "currency",
+      "label": "Currency",
+      "type": "select",
+      "default": "usd",
+      "options": [
+        {
+          "value": "usd",
+          "label": "US dollar"
+        },
+        {
+          "value": "eur",
+          "label": "Euro"
+        },
+        {
+          "value": "gbp",
+          "label": "British pound"
+        },
+        {
+          "value": "aud",
+          "label": "Australian dollar"
+        },
+        {
+          "value": "cad",
+          "label": "Canadian dollar"
+        },
+        {
+          "value": "nzd",
+          "label": "New Zealand dollar"
+        },
+        {
+          "value": "jpy",
+          "label": "Japanese yen"
+        },
+        {
+          "value": "chf",
+          "label": "Swiss franc"
+        },
+        {
+          "value": "inr",
+          "label": "Indian rupee"
+        }
+      ]
+    }
+  ]
+}

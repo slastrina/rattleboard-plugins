@@ -1,0 +1,17 @@
+{
+  "name": "On this day",
+  "summary": "A notable event from history that happened on today's date, from Wikipedia.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "fun",
+    "other"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://en.wikipedia.org/wiki/Wikipedia:Selected_anniversaries",
+  "needsSecrets": false,
+  "updated": "2026-10-19"
+}

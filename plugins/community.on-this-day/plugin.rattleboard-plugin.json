@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "id": "community.on-this-day",
+  "name": "On this day",
+  "description": "A notable event that happened on today's date, from Wikipedia's 'On this day' feed (no key needed)",
+  "kind": "json",
+  "fetch": {
+    "url": "https://api.wikimedia.org/feed/v1/wikipedia/en/onthisday/selected/{{now:MM}}/{{now:dd}}",
+    "every": "6h"
+  },
+  "pick": {
+    "title": "$.selected[0].text",
+    "body": "$.selected[0].year"
+  },
+  "card": {
+    "template": "ON THIS DAY IN {{body}}\n{{title}}",
+    "chip": "violet",
+    "pages": 3
+  },
+  "dwell": "45s"
+}

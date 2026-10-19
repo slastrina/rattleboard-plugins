@@ -1,0 +1,16 @@
+{
+  "name": "GitHub stars",
+  "summary": "How many stars a public GitHub repository has.",
+  "author": {
+    "name": "Samuel Lastrina",
+    "github": "slastrina"
+  },
+  "tags": [
+    "tech"
+  ],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://github.com",
+  "needsSecrets": false,
+  "updated": "2026-10-19"
+}

@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "id": "community.hacker-news",
+  "name": "Hacker News",
+  "description": "New stories from the Hacker News front page, one per card (via hnrss.org, no key needed)",
+  "kind": "rss",
+  "fetch": {
+    "url": "https://hnrss.org/frontpage",
+    "every": "15m"
+  },
+  "card": {
+    "chip": "orange",
+    "pages": 2
+  },
+  "maxItems": 10,
+  "dwell": "30s"
+}

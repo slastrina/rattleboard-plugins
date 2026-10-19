@@ -1,0 +1,40 @@
+{
+  "format": 1,
+  "id": "community.sunrise-sunset",
+  "name": "Sunrise and sunset",
+  "description": "Today's sunrise and sunset for a place, from sunrise-sunset.org (no key needed)",
+  "kind": "json",
+  "fetch": {
+    "url": "https://api.sunrise-sunset.org/json?lat={{settings.lat}}&lng={{settings.lng}}&tzid={{settings.tz}}&date=today",
+    "every": "3h"
+  },
+  "pick": {
+    "title": "$.results.sunrise",
+    "body": "$.results.sunset"
+  },
+  "card": {
+    "template": "SUN TODAY\nRISE {{title}}\nSET {{body}}",
+    "chip": "yellow"
+  },
+  "dwell": "30s",
+  "settings": [
+    {
+      "key": "lat",
+      "label": "Latitude",
+      "type": "number",
+      "default": -37.8136
+    },
+    {
+      "key": "lng",
+      "label": "Longitude",
+      "type": "number",
+      "default": 144.9631
+    },
+    {
+      "key": "tz",
+      "label": "Time zone (like Europe/London)",
+      "type": "text",
+      "default": "Australia/Melbourne"
+    }
+  ]
+}

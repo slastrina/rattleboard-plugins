@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "id": "community.bbc-world",
+  "name": "BBC World News",
+  "description": "New headlines from the BBC News world feed, one per card (no key needed)",
+  "kind": "rss",
+  "fetch": {
+    "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+    "every": "15m"
+  },
+  "card": {
+    "chip": "red",
+    "pages": 2
+  },
+  "maxItems": 10,
+  "dwell": "30s"
+}
