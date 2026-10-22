@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "generated": "2026-10-19T00:00:00Z",
+  "generated": "2026-10-22T00:00:00Z",
   "repo": "https://github.com/slastrina/rattleboard-plugins",
   "plugins": [
     {
@@ -116,7 +116,7 @@
     {
       "id": "community.dad-joke",
       "name": "Dad joke",
-      "summary": "A new dad joke every hour, never one it told recently.",
+      "summary": "A new dad joke every time it comes round, never one it told recently.",
       "author": {
         "name": "Samuel Lastrina",
         "github": "slastrina"
@@ -124,7 +124,7 @@
       "tags": [
         "fun"
       ],
-      "version": "1.0.0",
+      "version": "1.1.0",
       "license": "MIT",
       "homepage": "https://icanhazdadjoke.com",
       "kind": "script",
@@ -139,7 +139,7 @@
       "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.dad-joke/README.md",
       "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.dad-joke/preview.json",
       "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.dad-joke",
-      "updated": "2026-10-19"
+      "updated": "2026-10-22"
     },
     {
       "id": "community.exchange-rate",

@@ -1,7 +1,8 @@
-// Dad joke: a random joke from icanhazdadjoke.com. The store remembers the last 30 jokes'
-// ids, so one doesn't come round again soon (up to three tries for a new one).
+// Dad joke: a random joke from icanhazdadjoke.com. The store remembers the last 100 jokes'
+// ids, so one doesn't come round again soon (up to three tries for a new one). With
+// newEachTime it runs again after each showing, so every turn is a new joke.
 
-const SEEN = 30;
+const SEEN = 100;
 
 export default async function (ctx) {
   const seen = ctx.store.get("seen") || [];

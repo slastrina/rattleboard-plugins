@@ -1,12 +1,12 @@
 {
   "name": "Dad joke",
-  "summary": "A new dad joke every hour, never one it told recently.",
+  "summary": "A new dad joke every time it comes round, never one it told recently.",
   "author": { "name": "Samuel Lastrina", "github": "slastrina" },
   "tags": ["fun"],
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "homepage": "https://icanhazdadjoke.com",
   "needsSecrets": false,
   "minAppVersion": "0.8.0",
-  "updated": "2026-10-19"
+  "updated": "2026-10-22"
 }

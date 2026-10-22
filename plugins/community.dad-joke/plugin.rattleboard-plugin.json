@@ -2,11 +2,12 @@
   "format": 1,
   "id": "community.dad-joke",
   "name": "Dad joke",
-  "description": "A new dad joke every so often, never the same one twice in a row (icanhazdadjoke.com, no key needed)",
+  "description": "A new dad joke every time it comes round, never one it told recently (icanhazdadjoke.com, no key needed)",
   "kind": "script",
   "script": "script.js",
   "hosts": ["icanhazdadjoke.com"],
   "every": "1h",
   "dwell": "45s",
+  "newEachTime": true,
   "card": { "chip": "orange", "pages": 3 }
 }

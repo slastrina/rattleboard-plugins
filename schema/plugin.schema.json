@@ -369,6 +369,10 @@
       "$ref": "#/$defs/duration",
       "description": "10s to 1h"
     },
+    "newEachTime": {
+      "type": "boolean",
+      "description": "Rattleboard 0.10.7+, for script, json and command: run again as soon as the card has been shown, so it's different next time round (at most once a minute). Older versions ignore it."
+    },
     "schedule": {
       "type": "object",
       "properties": {

@@ -197,6 +197,7 @@ Only `format`, `id`, `name` and `kind` are always needed. Unknown fields are ign
 | `alertWhen` | Keywords that make a new item interrupt: `["keyword:outage", "keyword:launch"]` |
 | `maxItems` | 1–50 items taken from each fetch (default 10), after `pick.where` and `pick.sort` |
 | `dwell` | How long the card stays up, `10s` to `1h`. Users can change it. |
+| `newEachTime` | `true` for `script`, `json` and `command`: runs it again as soon as its card has been shown, so it's different every time it comes round (a joke, a quote), and never changes while it's up. At most once a minute; `every` still applies when it isn't shown. Rattleboard 0.10.7 and later; older versions ignore it and use `every`. |
 | `schedule` | When it may show: `{"days": ["mon", "tue", "wed", "thu", "fri"], "from": "07:00", "to": "10:00"}`. No days means every day; `from`/`to` may run past midnight. |
 | `settings` | Up to 30 fields for the user: `key` (letters, digits, `_`), `label`, `type` and `default`. Types: `text`, `number`, `toggle`, `select` (with `options`: values, or `{"value": …, "label": …}`), `date` (`2026-12-25`), `time` (`07:30`) and `lines` (a list, one per line). |
 | `secrets` | Up to 10 private values, like API keys: `key` and `label`. See [Plugins that need a key](#plugins-that-need-a-key). |
