@@ -23,10 +23,18 @@ A plugin is one small JSON file that adds a **source** to your board's rotation:
 | [PTV disruptions](plugins/community.ptv-disruptions) | Current disruptions at a Victorian stop | Yes (free, from PTV) |
 | [Next public holiday](plugins/community.next-public-holiday) | The next holiday in your country or state, and days to go (script) | No |
 | [Sun and moon](plugins/community.sun-and-moon) | Sunrise, sunset and the moon's phase, worked out on your device (script) | No |
-| [Dad joke](plugins/community.dad-joke) | A new dad joke every hour (script) | No |
+| [Dad joke](plugins/community.dad-joke) | A new dad joke every time it comes round (script) | No |
 | [GitHub reviews](plugins/community.github-reviews) | PRs waiting for your review, yours, and unread notifications (script) | Yes (a GitHub token) |
 | [London arrivals](plugins/community.london-arrivals) | Next arrivals at a TfL stop, coloured by line status (script) | No |
 | [Big countdown](plugins/community.big-countdown) | Days to go in big colour digits with a filling bar (script) | No |
+| [Trivia](plugins/community.trivia) | A question, then its answer, new each time (Open Trivia DB, script) | No |
+| [Useless fact](plugins/community.useless-fact) | A weird fact, new each time; for fun, not all true (script) | No |
+| [Dinner idea](plugins/community.dinner-idea) | A random recipe or cocktail, with a link to it (TheMealDB, script) | No |
+| [Fortune teller](plugins/community.fortune) | A fortune with lucky numbers, or the crystal ball's answer (script) | No |
+| [Word scramble](plugins/community.word-scramble) | Unscramble a word, then the answer flips up (script) | No |
+| [Pixel art](plugins/community.pixel-art) | Little pictures in colour tiles, a different one each time (script) | No |
+| [Snake](plugins/community.snake) | A game of Snake that plays itself in colour tiles (script) | No |
+| [Game of Life](plugins/community.game-of-life) | Conway's Game of Life, coloured by age (script) | No |
 
 The full list, with authors, versions and the hosts each plugin contacts, is [`index.json`](index.json).
 

@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "id": "community.fortune",
+  "name": "Fortune teller",
+  "description": "A fortune-cookie fortune with lucky numbers, or the crystal ball's answer, new every time it comes round (made up on your device)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": [],
+  "every": "1h",
+  "dwell": "30s",
+  "newEachTime": true,
+  "card": { "chip": "violet", "pages": 2 },
+  "settings": [
+    {
+      "key": "mode",
+      "label": "Show",
+      "type": "select",
+      "default": "mix",
+      "options": [
+        { "value": "mix", "label": "Fortunes and the crystal ball" },
+        { "value": "fortune", "label": "Fortune cookies only" },
+        { "value": "ball", "label": "The crystal ball only" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "format": 1,
+  "id": "community.pixel-art",
+  "name": "Pixel art",
+  "description": "Little pictures in colour tiles: a heart, a space invader, a rainbow, a sunset and more, a different one every time it comes round (drawn on your device)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": [],
+  "every": "1h",
+  "dwell": "20s",
+  "newEachTime": true
+}

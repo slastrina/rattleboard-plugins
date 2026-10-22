@@ -142,6 +142,42 @@
       "updated": "2026-10-22"
     },
     {
+      "id": "community.dinner-idea",
+      "name": "Dinner idea",
+      "summary": "A random recipe or cocktail to try, new every time it comes round. Click the board for the recipe.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun",
+        "home"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://www.themealdb.com",
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "what",
+          "label": "Suggest",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "www.themealdb.com",
+        "www.thecocktaildb.com"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.dinner-idea/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.dinner-idea/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.dinner-idea/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.dinner-idea",
+      "updated": "2026-10-22"
+    },
+    {
       "id": "community.exchange-rate",
       "name": "Exchange rate",
       "summary": "The latest reference rate between two currencies (European Central Bank data via Frankfurter).",
@@ -179,6 +215,70 @@
       "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.exchange-rate/preview.json",
       "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.exchange-rate",
       "updated": "2026-10-19"
+    },
+    {
+      "id": "community.fortune",
+      "name": "Fortune teller",
+      "summary": "A fortune-cookie fortune with lucky numbers, or the crystal ball's answer, new every time it comes round.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": null,
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "mode",
+          "label": "Show",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.fortune/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.fortune/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.fortune/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.fortune",
+      "updated": "2026-10-22"
+    },
+    {
+      "id": "community.game-of-life",
+      "name": "Game of Life",
+      "summary": "Conway's Game of Life in colour tiles, a generation every 10 seconds.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life",
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "colour",
+          "label": "Colour",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.game-of-life/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.game-of-life/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.game-of-life/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.game-of-life",
+      "updated": "2026-10-22"
     },
     {
       "id": "community.github-repo-stars",
@@ -429,6 +529,32 @@
       "updated": "2026-10-19"
     },
     {
+      "id": "community.pixel-art",
+      "name": "Pixel art",
+      "summary": "Little pictures in colour tiles: a heart, a space invader, a rainbow, a sunset and more.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": null,
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [],
+      "secrets": [],
+      "hosts": [],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.pixel-art/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.pixel-art/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.pixel-art/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.pixel-art",
+      "updated": "2026-10-22"
+    },
+    {
       "id": "community.planes-near-airport",
       "name": "Planes near the airport",
       "summary": "Aircraft climbing out of or coming in to an airport near you, live from adsb.lol. No key needed.",
@@ -602,6 +728,43 @@
       "updated": "2026-10-19"
     },
     {
+      "id": "community.snake",
+      "name": "Snake",
+      "summary": "A game of Snake that plays itself across the board in colour tiles.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": null,
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "speed",
+          "label": "Tiles it moves every 10 seconds",
+          "type": "select"
+        },
+        {
+          "key": "colour",
+          "label": "Snake colour",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.snake/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.snake/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.snake/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.snake",
+      "updated": "2026-10-22"
+    },
+    {
       "id": "community.sun-and-moon",
       "name": "Sun and moon",
       "summary": "Today's sunrise and sunset and the moon's phase, worked out on your device.",
@@ -688,6 +851,105 @@
       "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.sunrise-sunset/preview.json",
       "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.sunrise-sunset",
       "updated": "2026-10-19"
+    },
+    {
+      "id": "community.trivia",
+      "name": "Trivia",
+      "summary": "A trivia question, then its answer on the next page, new every time it comes round.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://opentdb.com",
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "category",
+          "label": "Category",
+          "type": "select"
+        },
+        {
+          "key": "difficulty",
+          "label": "Difficulty",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [
+        "opentdb.com"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.trivia/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.trivia/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.trivia/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.trivia",
+      "updated": "2026-10-22"
+    },
+    {
+      "id": "community.useless-fact",
+      "name": "Useless fact",
+      "summary": "A weird fact, new every time it comes round. For fun: not every one is true.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": "https://uselessfacts.jsph.pl",
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [],
+      "secrets": [],
+      "hosts": [
+        "uselessfacts.jsph.pl"
+      ],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.useless-fact/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.useless-fact/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.useless-fact/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.useless-fact",
+      "updated": "2026-10-22"
+    },
+    {
+      "id": "community.word-scramble",
+      "name": "Word scramble",
+      "summary": "A word with its letters mixed up and a hint, then the answer, new every time it comes round.",
+      "author": {
+        "name": "Samuel Lastrina",
+        "github": "slastrina"
+      },
+      "tags": [
+        "fun"
+      ],
+      "version": "1.0.0",
+      "license": "MIT",
+      "homepage": null,
+      "kind": "script",
+      "needsSecrets": false,
+      "minAppVersion": "0.8.0",
+      "settings": [
+        {
+          "key": "theme",
+          "label": "Words",
+          "type": "select"
+        }
+      ],
+      "secrets": [],
+      "hosts": [],
+      "manifestUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.word-scramble/plugin.rattleboard-plugin.json",
+      "readmeUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.word-scramble/README.md",
+      "previewUrl": "https://raw.githubusercontent.com/slastrina/rattleboard-plugins/main/plugins/community.word-scramble/preview.json",
+      "folderUrl": "https://github.com/slastrina/rattleboard-plugins/tree/main/plugins/community.word-scramble",
+      "updated": "2026-10-22"
     }
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "name": "Useless fact",
+  "summary": "A weird fact, new every time it comes round. For fun: not every one is true.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["fun"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://uselessfacts.jsph.pl",
+  "needsSecrets": false,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-22"
+}

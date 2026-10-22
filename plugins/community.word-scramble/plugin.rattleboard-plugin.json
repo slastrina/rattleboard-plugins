@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "id": "community.word-scramble",
+  "name": "Word scramble",
+  "description": "A word with its letters mixed up and a hint, then the answer on the next page, a new word every time it comes round (made up on your device)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": [],
+  "every": "1h",
+  "dwell": "40s",
+  "newEachTime": true,
+  "card": { "chip": "yellow", "pages": 2 },
+  "settings": [
+    {
+      "key": "theme",
+      "label": "Words",
+      "type": "select",
+      "default": "mixed",
+      "options": [
+        { "value": "mixed", "label": "All kinds" },
+        { "value": "animal", "label": "Animals" },
+        { "value": "food", "label": "Food" },
+        { "value": "place", "label": "Places" },
+        { "value": "thing", "label": "Things" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Game of Life",
+  "summary": "Conway's Game of Life in colour tiles, a generation every 10 seconds.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["fun"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life",
+  "needsSecrets": false,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-22"
+}

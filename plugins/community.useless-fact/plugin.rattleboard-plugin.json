@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "id": "community.useless-fact",
+  "name": "Useless fact",
+  "description": "A weird fact, new every time it comes round. For fun: not every one is true (uselessfacts.jsph.pl, no key needed)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": ["uselessfacts.jsph.pl"],
+  "every": "1h",
+  "dwell": "30s",
+  "newEachTime": true,
+  "card": { "chip": "blue", "pages": 2 }
+}

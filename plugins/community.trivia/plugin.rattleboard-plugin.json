@@ -1,0 +1,46 @@
+{
+  "format": 1,
+  "id": "community.trivia",
+  "name": "Trivia",
+  "description": "A trivia question, then its answer on the next page, a new one every time it comes round (Open Trivia Database, no key needed)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": ["opentdb.com"],
+  "every": "1h",
+  "dwell": "40s",
+  "newEachTime": true,
+  "card": { "chip": "violet", "pages": 3 },
+  "settings": [
+    {
+      "key": "category",
+      "label": "Category",
+      "type": "select",
+      "default": "any",
+      "options": [
+        { "value": "any", "label": "Anything" },
+        { "value": "9", "label": "General knowledge" },
+        { "value": "17", "label": "Science and nature" },
+        { "value": "18", "label": "Computers" },
+        { "value": "22", "label": "Geography" },
+        { "value": "23", "label": "History" },
+        { "value": "21", "label": "Sport" },
+        { "value": "27", "label": "Animals" },
+        { "value": "11", "label": "Film" },
+        { "value": "12", "label": "Music" },
+        { "value": "15", "label": "Video games" }
+      ]
+    },
+    {
+      "key": "difficulty",
+      "label": "Difficulty",
+      "type": "select",
+      "default": "any",
+      "options": [
+        { "value": "any", "label": "Any" },
+        { "value": "easy", "label": "Easy" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "hard", "label": "Hard" }
+      ]
+    }
+  ]
+}

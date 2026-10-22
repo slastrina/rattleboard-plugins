@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "id": "community.dinner-idea",
+  "name": "Dinner idea",
+  "description": "A random recipe (or a cocktail) to try, new every time it comes round; click the board for the recipe (TheMealDB and TheCocktailDB)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": ["www.themealdb.com", "www.thecocktaildb.com"],
+  "every": "1h",
+  "dwell": "30s",
+  "newEachTime": true,
+  "card": { "chip": "orange" },
+  "settings": [
+    {
+      "key": "what",
+      "label": "Suggest",
+      "type": "select",
+      "default": "meal",
+      "options": [
+        { "value": "meal", "label": "Meals" },
+        { "value": "cocktail", "label": "Cocktails" },
+        { "value": "both", "label": "Both, at random" }
+      ]
+    }
+  ]
+}

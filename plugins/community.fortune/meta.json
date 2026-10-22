@@ -1,0 +1,11 @@
+{
+  "name": "Fortune teller",
+  "summary": "A fortune-cookie fortune with lucky numbers, or the crystal ball's answer, new every time it comes round.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["fun"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "needsSecrets": false,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-22"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "Trivia",
+  "summary": "A trivia question, then its answer on the next page, new every time it comes round.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["fun"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://opentdb.com",
+  "needsSecrets": false,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-22"
+}

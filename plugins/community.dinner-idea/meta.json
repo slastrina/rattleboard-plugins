@@ -1,0 +1,12 @@
+{
+  "name": "Dinner idea",
+  "summary": "A random recipe or cocktail to try, new every time it comes round. Click the board for the recipe.",
+  "author": { "name": "Samuel Lastrina", "github": "slastrina" },
+  "tags": ["fun", "home"],
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://www.themealdb.com",
+  "needsSecrets": false,
+  "minAppVersion": "0.8.0",
+  "updated": "2026-10-22"
+}

@@ -1,0 +1,38 @@
+{
+  "format": 1,
+  "id": "community.snake",
+  "name": "Snake",
+  "description": "A game of Snake that plays itself across the board in colour tiles, moving every 10 seconds (runs on your device)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": [],
+  "every": "10s",
+  "dwell": "1m",
+  "settings": [
+    {
+      "key": "speed",
+      "label": "Tiles it moves every 10 seconds",
+      "type": "select",
+      "default": "2",
+      "options": [
+        { "value": "1", "label": "1 (slow)" },
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4 (fast)" }
+      ]
+    },
+    {
+      "key": "colour",
+      "label": "Snake colour",
+      "type": "select",
+      "default": "green",
+      "options": [
+        { "value": "green", "label": "Green" },
+        { "value": "blue", "label": "Blue" },
+        { "value": "violet", "label": "Violet" },
+        { "value": "orange", "label": "Orange" },
+        { "value": "white", "label": "White" }
+      ]
+    }
+  ]
+}

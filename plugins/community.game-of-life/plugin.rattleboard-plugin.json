@@ -1,0 +1,26 @@
+{
+  "format": 1,
+  "id": "community.game-of-life",
+  "name": "Game of Life",
+  "description": "Conway's Game of Life in colour tiles, a generation every 10 seconds, starting over when it settles (runs on your device)",
+  "kind": "script",
+  "script": "script.js",
+  "hosts": [],
+  "every": "10s",
+  "dwell": "1m",
+  "settings": [
+    {
+      "key": "colour",
+      "label": "Colour",
+      "type": "select",
+      "default": "age",
+      "options": [
+        { "value": "age", "label": "By age: new cells yellow, old ones violet" },
+        { "value": "green", "label": "Green" },
+        { "value": "yellow", "label": "Yellow" },
+        { "value": "blue", "label": "Blue" },
+        { "value": "white", "label": "White" }
+      ]
+    }
+  ]
+}
